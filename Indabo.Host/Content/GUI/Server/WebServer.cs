@@ -82,7 +82,7 @@
                 }
                 else if (request.Url.AbsolutePath.StartsWith("/Panel/"))
                 {
-                    string absolutePanelPath = Path.Combine(ROOT_DIRECTORY, request.Url.AbsolutePath.TrimStart('/').Replace("/", "\\") + ".html");
+                    string absolutePanelPath = Path.Combine(ROOT_DIRECTORY, request.Url.AbsolutePath.TrimStart('/').Replace("/", "\\"));
                     if (File.Exists(absolutePanelPath))
                     {
                         buffer = Encoding.UTF8.GetBytes(File.ReadAllText(absolutePanelPath));
