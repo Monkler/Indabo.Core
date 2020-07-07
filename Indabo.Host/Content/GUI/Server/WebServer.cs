@@ -32,24 +32,27 @@
 
             this.running = true;
 
-            while (this.running)
+            new Thread(() =>
             {
-                try
+                while (this.running)
                 {
-                    HttpListenerContext context = this.listener.GetContext();
-
-                    Logging.Info("New request from: " + context.Request.UserHostName);
-
-                    new Thread(() =>
+                    try
                     {
-                        this.HandleCallback(context);
-                    }).Start();
+                        HttpListenerContext context = this.listener.GetContext();
+
+                        Logging.Info("New request from: " + context.Request.UserHostName);
+
+                        new Thread(() =>
+                        {
+                            this.HandleCallback(context);
+                        }).Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logging.Error("Error while connecting to client!", ex);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Logging.Error("Error while connecting to client!", ex);
-                }
-            }
+            }).Start();
         }
 
         private void HandleCallback(HttpListenerContext context)
@@ -64,7 +67,7 @@
                 if (request.Url.AbsolutePath == "/favicon.png" || request.Url.AbsolutePath == "/favicon.ico")
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string resourceName = "Indabo.Host.Content.GUI.Frame.favicon.png";
+                    string resourceName = "Indabo.Host.Content.GUI.Frame.Indabo.png";
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                     {
                         using (BinaryReader reader = new BinaryReader(stream))

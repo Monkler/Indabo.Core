@@ -7,21 +7,23 @@
 
     public class Program
     {
-        public static void Main(string[] args)
+        private static WebServer webServer;
+
+        public static void Start(string[] args)
         {
             Logging.Info($"Indabo started! - {Assembly.GetExecutingAssembly().FullName}");
 
             Config config = ConfigFile.Load<Config>("Indabo");
 
-            WebServer webServer = new WebServer(config.Port);
-            webServer.Start();
+            Program.webServer = new WebServer(config.Port);
+            Program.webServer.Start();
+        }
 
-            Console.ReadKey();
-
-            webServer.Stop();
+        public static void Stop()
+        {
+            Program.webServer.Stop();
 
             Logging.Info($"Indabo stopped!");
-
         }
     }
 }

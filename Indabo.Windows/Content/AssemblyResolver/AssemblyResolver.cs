@@ -1,4 +1,4 @@
-﻿namespace Indabo.Host.Windows
+﻿namespace Indabo.Windows
 {
     using System;
     using System.IO;

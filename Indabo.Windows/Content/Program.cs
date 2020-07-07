@@ -1,4 +1,4 @@
-﻿namespace Indabo.Host.Windows
+﻿namespace Indabo.Windows
 {
     using System;
     using System.Reflection;
@@ -23,7 +23,11 @@
 
             void StartAction()
             {
-                Indabo.Host.Program.Main(args);
+                Host.Program.Start(args);
+
+                while (Console.ReadKey().Key != ConsoleKey.Escape) { }
+
+                Host.Program.Stop();
             }
             StartAction();
         }

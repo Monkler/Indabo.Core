@@ -35,6 +35,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>..\Resources\Icon\Indabo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,29 +50,39 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Content\AssemblyResolver\AssemblyResolver.cs" />
-    <Compile Include="Content\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Content\Program.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Indabo.Core\Indabo.Core.csproj">
+      <Project>{2667236a-dba0-40a2-866c-c8b87858909a}</Project>
+      <Name>Indabo.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Indabo.Host\Indabo.Host.csproj">
       <Project>{6af49227-62f7-4c44-b447-1c0683af9d41}</Project>
       <Name>Indabo.Host</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <EmbeddedResource Include="..\Indabo.Core\bin\Debug\netstandard2.0\Indabo.Core.dll">
-      <Link>Resources\Indabo.Core.dll</Link>
+    <EmbeddedResource Include="..\Indabo.Core\bin\Release\netstandard2.0\Indabo.Core.dll">
+      <Link>Resources\Assembly\Indabo.Core.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Indabo.Host\bin\Debug\netstandard2.0\Indabo.Host.dll">
-      <Link>Resources\Indabo.Host.dll</Link>
+    <EmbeddedResource Include="..\Indabo.Host\bin\Release\netstandard2.0\Indabo.Host.dll">
+      <Link>Resources\Assembly\Indabo.Host.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\Newtonsoft.Json.dll">
+      <Link>Resources\Assembly\Newtonsoft.Json.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Newtonsoft.Json.dll" />
+    <Content Include="..\Resources\Icon\Indabo.ico">
+      <Link>Resources\Icon\Indabo.ico</Link>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

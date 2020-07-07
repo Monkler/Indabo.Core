@@ -25,6 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\Resources\Icon\Indabo.png" Link="Content\GUI\Frame\Indabo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Content\Communication\Controller\" />
     <Folder Include="Content\Communication\Notifier\" />
     <Folder Include="Content\Communication\Reader\" />
@@ -42,7 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Content\GUI\Frame\favicon.png" />
     <EmbeddedResource Include="Content\GUI\Frame\Frame.html" />
   </ItemGroup>
 
