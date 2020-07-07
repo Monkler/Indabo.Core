@@ -14,16 +14,6 @@
     <DocumentationFile>C:\Private\Indabo\Indabo.Host\bin\Indabo.Host.xml</DocumentationFile>
   </PropertyGroup>
 
-
-  <ItemGroup>
-    <Compile Remove="Content\JavascriptLoader.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Content\GUI\Frame\FavIcon.png" />
-    <None Remove="Content\GUI\Frame\Frame.html" />
-  </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="..\Resources\Icon\Indabo.png" Link="Content\GUI\Frame\Indabo.png" />
   </ItemGroup>
@@ -43,10 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Indabo.Core\Indabo.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Content\GUI\Frame\Frame.html" />
   </ItemGroup>
 
 </Project>
