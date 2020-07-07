@@ -8,8 +8,8 @@
         private int port;
         private string dbType;
 
-        public int Port { get => port; set => port = value; }
-        public string DBType { get => dbType; set => dbType = value; }
+        public int Port { get => this.port; set => this.port = value; }
+        public string DBType { get => this.dbType; set => this.dbType = value; }
 
         public Config() { }
     }

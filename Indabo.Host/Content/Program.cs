@@ -13,6 +13,8 @@
 
             Config config = ConfigFile.Load<Config>("Indabo");
 
+            Logging.Info($"Indabo stopped!");
+
         }
     }
 }

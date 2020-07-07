@@ -6,6 +6,14 @@
     <FileVersion>0.1.0.0</FileVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Private\Indabo\Indabo.Host\Indabo.Host.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Private\Indabo\Indabo.Host\Indabo.Host.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="Content\Communication\Controller\" />
     <Folder Include="Content\Communication\Notifier\" />
@@ -16,6 +24,10 @@
     <Folder Include="Content\GUI\Server\" />
     <Folder Include="Content\UserManager\" />
     <Folder Include="Content\PluginManager\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

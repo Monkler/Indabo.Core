@@ -6,12 +6,24 @@
     <FileVersion>0.1.0.0</FileVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Private\Indabo\Indabo.Core\Indabo.Core.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>C:\Private\Indabo\Indabo.Core\Indabo.Core.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="Content\Communication\Controller\" />
     <Folder Include="Content\Communication\Notifier\" />
     <Folder Include="Content\Communication\Reader\" />
     <Folder Include="Content\Communication\Websocket\" />
     <Folder Include="Content\DBManager\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

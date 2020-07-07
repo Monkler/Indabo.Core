@@ -21,11 +21,11 @@
             AssemblyResolver assemblyResolver = new AssemblyResolver(Assembly.GetExecutingAssembly());
             assemblyResolver.Activate();
 
-            Action startAction = () =>
+            void StartAction()
             {
                 Indabo.Host.Program.Main(args);
-            };
-            startAction.Invoke();
+            }
+            StartAction();
         }
     }
 }
