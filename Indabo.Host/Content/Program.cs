@@ -13,6 +13,13 @@
 
             Config config = ConfigFile.Load<Config>("Indabo");
 
+            WebServer webServer = new WebServer(config.Port);
+            webServer.Start();
+
+            Console.ReadKey();
+
+            webServer.Stop();
+
             Logging.Info($"Indabo stopped!");
 
         }

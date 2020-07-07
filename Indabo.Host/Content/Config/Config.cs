@@ -5,7 +5,9 @@
     [Serializable]
     internal class Config
     {
-        private int port;
+        private const int DEFAULT_PORT = 48623;
+
+        private int port = DEFAULT_PORT;
         private string dbType;
 
         public int Port { get => this.port; set => this.port = value; }

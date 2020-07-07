@@ -7,21 +7,28 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Private\Indabo\Indabo.Host\Indabo.Host.xml</DocumentationFile>
+    <DocumentationFile>C:\Private\Indabo\Indabo.Host\bin\Indabo.Host.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Private\Indabo\Indabo.Host\Indabo.Host.xml</DocumentationFile>
+    <DocumentationFile>C:\Private\Indabo\Indabo.Host\bin\Indabo.Host.xml</DocumentationFile>
   </PropertyGroup>
+
+
+  <ItemGroup>
+    <Compile Remove="Content\JavascriptLoader.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Content\GUI\Frame\FavIcon.png" />
+    <None Remove="Content\GUI\Frame\Frame.html" />
+  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Content\Communication\Controller\" />
     <Folder Include="Content\Communication\Notifier\" />
     <Folder Include="Content\Communication\Reader\" />
     <Folder Include="Content\Communication\Websocket\" />
-    <Folder Include="Content\GUI\Frame\" />
-    <Folder Include="Content\GUI\Loader\" />
-    <Folder Include="Content\GUI\Server\" />
     <Folder Include="Content\UserManager\" />
     <Folder Include="Content\PluginManager\" />
   </ItemGroup>
@@ -32,6 +39,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Indabo.Core\Indabo.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Content\GUI\Frame\FavIcon.png" />
+    <EmbeddedResource Include="Content\GUI\Frame\Frame.html" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <meta http-equiv=Content-Type content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <link id="favicon" rel="shortcut icon" type="image/png" href="FavIcon.png" data-original-href="FavIcon.png" />
+
+    <title>Indabo</title>
+
+    %Library%
+
+    %Widget%
+</head>
+<body>
+    <!-- Use conditional comments to check for old IE9 versions (Note: IE9 is the last version that supported conditional comments). -->
+    <div id="ie9ConditionalCommentContainer">
+        <!--[if lte IE 9]>
+        <div style="margin: 16px; font-family: Arial, sans-serif;">
+            <h1>Obsolete Browser detected</h1>
+            <p>
+                Unfortunately, the config page cannot be displayed because you're trying
+                to run it in an obsolete, unsupported browser (for example, Internet&#xa0;Explorer&#xa0;9).
+            </p>
+            <p>
+                Please <a href="http://windows.microsoft.com/ie" target="_blank">upgrade your Internet&#xa0;Explorer</a>
+                to version&#xa0;11.
+            </p>
+            <div class="footerComment"></div>
+        </div>
+        <![endif]-->
+    </div>
+    <!--[if !(lte IE 9)]><!-->
+    <!-- Show a warning if Javascript is not enabled. Note that Search engines (like Google) may show this text in the
+        search results, so we use a generic welcome text.
+        Don't show it on IE8 since we aren't able to remove the div there. -->
+    <div id="JavascriptWarning" style="margin-top: 50px;">
+        <h1>Indabo GUI</h1>
+        <p>
+            Welcome to the Indabo GUI. It seems that <strong>JavaScript</strong> is disabled in your Browser.
+            Please enable JavaScript to use the Indabo GUI.
+        </p>
+    </div>
+    <script type="application/javascript">
+        (function () {
+            // Remove the javascript warning as soon as possible.
+            document.getElementById("JavascriptWarning").remove();
+        })();
+    </script>
+    
+    <!-- TODO -->
+
+    <!--<![endif]-->
+</body>
+</html>

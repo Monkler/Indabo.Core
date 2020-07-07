@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Private\Indabo\Indabo.Core\Indabo.Core.xml</DocumentationFile>
+    <DocumentationFile>C:\Private\Indabo\Indabo.Core\bin\Indabo.Core.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Private\Indabo\Indabo.Core\Indabo.Core.xml</DocumentationFile>
+    <DocumentationFile>C:\Private\Indabo\Indabo.Core\bin\Indabo.Core.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
