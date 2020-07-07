@@ -4,8 +4,8 @@ namespace Indabo.Host
 {
     internal static class DynamicJavascriptLoader
     {
-        public const string WIDGET_FOLDER = "./Widget";
-        public const string LIBRARY_FOLDER = "./Library";
+        public const string WIDGET_FOLDER = "Widget";
+        public const string LIBRARY_FOLDER = "Library";
 
         public static string LoadFromFolderAsHtmlTags(string rootFolder)
         {
@@ -15,10 +15,13 @@ namespace Indabo.Host
             {
                 foreach (string file in Directory.GetFiles(rootFolder, "*.*", SearchOption.AllDirectories))
                 {
-                    script += "<script type=\"application/javascript\" charset=\"utf-8\">";
-                    script += File.ReadAllText(file);
-                    script += "</script>";
-                }
+                    if (file.EndsWith(".js"))
+                    {
+                        script += "<script type=\"application/javascript\" charset=\"utf-8\">";
+                        script += File.ReadAllText(file);
+                        script += "</script>";
+                    }
+                }                
             }
 
             return script;

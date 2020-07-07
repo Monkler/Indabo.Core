@@ -1,15 +1,19 @@
 ﻿namespace Indabo.Host
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Net;
     using System.Reflection;
     using System.Text;
     using System.Threading;
     using Indabo.Core;
+    using Newtonsoft.Json;
 
     internal class WebServer
     {
+        private static readonly string ROOT_DIRECTORY = new FileInfo(new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath).Directory.FullName;
+
         private HttpListener listener;
 
         private bool running;
@@ -41,7 +45,7 @@
                         this.HandleCallback(context);
                     }).Start();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Logging.Error("Error while connecting to client!", ex);
                 }
@@ -57,10 +61,10 @@
 
                 byte[] buffer = Encoding.UTF8.GetBytes("Page not found...");
 
-                if (request.Url.AbsolutePath == "/FavIcon.png")
+                if (request.Url.AbsolutePath == "/favicon.png" || request.Url.AbsolutePath == "/favicon.ico")
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string resourceName = "Indabo.Host.Content.GUI.Frame.FavIcon.png";
+                    string resourceName = "Indabo.Host.Content.GUI.Frame.favicon.png";
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                     {
                         using (BinaryReader reader = new BinaryReader(stream))
@@ -69,9 +73,29 @@
                         }
                     }
                 }
+                else if (request.Url.AbsolutePath == "/Panels")
+                {
+                    List<string> panels = DynamicHtmlLoader.GetFileNamesFromFolder(DynamicHtmlLoader.PANEL_FOLDER);
 
-                // else if "/Panel/??? return something in Panel folder
+                    string json = JsonConvert.SerializeObject(panels, Formatting.None);
+                    buffer = Encoding.UTF8.GetBytes(json);
+                }
+                else if (request.Url.AbsolutePath.StartsWith("/Panel/"))
+                {
+                    string absolutePanelPath = Path.Combine(ROOT_DIRECTORY, request.Url.AbsolutePath.TrimStart('/').Replace("/", "\\") + ".html");
+                    if (File.Exists(absolutePanelPath))
+                    {
+                        buffer = Encoding.UTF8.GetBytes(File.ReadAllText(absolutePanelPath));
 
+                        Logging.Info($"Responsed Panel: '{request.Url.AbsolutePath}'");
+                    }
+                    else
+                    {
+                        buffer = Encoding.UTF8.GetBytes("Panel not found...");
+
+                        Logging.Warning($"Request of unkonwn Panel: '{request.Url.AbsolutePath}'");
+                    }
+                }
                 else
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
@@ -82,8 +106,8 @@
                         {
                             string frame = reader.ReadToEnd();
 
-                            string libraries = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(DynamicJavascriptLoader.LIBRARY_FOLDER);
-                            string widgets = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(DynamicJavascriptLoader.WIDGET_FOLDER);
+                            string libraries = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Path.Combine(ROOT_DIRECTORY, DynamicJavascriptLoader.LIBRARY_FOLDER));
+                            string widgets = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Path.Combine(ROOT_DIRECTORY, DynamicJavascriptLoader.WIDGET_FOLDER));
 
                             frame = frame.Replace("%Library%", libraries);
                             frame = frame.Replace("%Widget%", widgets);
@@ -91,8 +115,10 @@
                             buffer = Encoding.UTF8.GetBytes(frame);
                         }
                     }
+
+                    Logging.Info($"Responsed Main Frame");
                 }
-                
+
                 response.ContentLength64 = buffer.Length;
                 Stream output = response.OutputStream;
                 output.Write(buffer, 0, buffer.Length);

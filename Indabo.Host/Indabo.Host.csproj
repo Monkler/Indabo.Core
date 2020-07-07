@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Content\GUI\Frame\FavIcon.png" />
+    <EmbeddedResource Include="Content\GUI\Frame\favicon.png" />
     <EmbeddedResource Include="Content\GUI\Frame\Frame.html" />
   </ItemGroup>
 
