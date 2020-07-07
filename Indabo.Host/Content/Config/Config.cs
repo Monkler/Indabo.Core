@@ -3,7 +3,7 @@
     using System;
 
     [Serializable]
-    internal class Config
+    public class Config
     {
         private const int DEFAULT_PORT = 48623;
 

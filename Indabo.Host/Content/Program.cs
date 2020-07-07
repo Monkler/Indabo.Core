@@ -8,14 +8,17 @@
     public class Program
     {
         private static WebServer webServer;
+        private static Config config;
+
+        public static Config Config { get => config; set => config = value; }
 
         public static void Start(string[] args)
         {
             Logging.Info($"Indabo started! - {Assembly.GetExecutingAssembly().FullName}");
 
-            Config config = ConfigFile.Load<Config>("Indabo");
+            Program.config = ConfigFile.Load<Config>("Indabo");
 
-            Program.webServer = new WebServer(config.Port);
+            Program.webServer = new WebServer(Program.config.Port);
             Program.webServer.Start();
         }
 

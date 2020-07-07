@@ -16,6 +16,8 @@
 
             this.Height = (SystemParameters.PrimaryScreenHeight * 0.75);
             this.Width = (SystemParameters.PrimaryScreenWidth * 0.66);
+
+            this.webBrowser.Navigate("http://localhost:" + Host.Program.Config.Port);
         }
 
         private void OnWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
