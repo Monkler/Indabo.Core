@@ -15,7 +15,26 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\Resources\Icon\Indabo.png" Link="Content\GUI\Frame\Indabo.png" />
+    <None Remove="Content\GUI\Frame\Frame.css" />
+    <None Remove="Content\GUI\Frame\Frame.html" />
+    <None Remove="Content\GUI\Frame\Frame.js" />
+    <None Remove="Content\GUI\Frame\Icon\Connected.svg" />
+    <None Remove="Content\GUI\Frame\Icon\Disconnected.svg" />
+    <None Remove="Content\GUI\Frame\Icon\Feedback.svg" />
+    <None Remove="Content\GUI\Frame\Icon\Help.svg" />
+    <None Remove="Content\GUI\Frame\Icon\MenuSymbol.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\Resources\Icon\Indabo.png" Link="Content\GUI\Frame\Icon\Indabo.png" />
+    <EmbeddedResource Include="Content\GUI\Frame\Frame.css" />
+    <EmbeddedResource Include="Content\GUI\Frame\Frame.html" />
+    <EmbeddedResource Include="Content\GUI\Frame\Frame.js" />
+    <EmbeddedResource Include="Content\GUI\Frame\Icon\Connected.svg" />
+    <EmbeddedResource Include="Content\GUI\Frame\Icon\Disconnected.svg" />
+    <EmbeddedResource Include="Content\GUI\Frame\Icon\Feedback.svg" />
+    <EmbeddedResource Include="Content\GUI\Frame\Icon\Help.svg" />
+    <EmbeddedResource Include="Content\GUI\Frame\Icon\MenuSymbol.svg" />
   </ItemGroup>
 
   <ItemGroup>

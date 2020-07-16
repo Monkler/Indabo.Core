@@ -62,12 +62,16 @@
                 HttpListenerRequest request = context.Request;
                 HttpListenerResponse response = context.Response;
 
+                response.StatusCode = (int)HttpStatusCode.NotFound;
                 byte[] buffer = Encoding.UTF8.GetBytes("Page not found...");
 
                 if (request.Url.AbsolutePath == "/favicon.png" || request.Url.AbsolutePath == "/favicon.ico")
                 {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    response.ContentType = "image/png";
+
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string resourceName = "Indabo.Host.Content.GUI.Frame.Indabo.png";
+                    string resourceName = "Indabo.Host.Content.GUI.Frame.Icon.Indabo.png";
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                     {
                         using (BinaryReader reader = new BinaryReader(stream))
@@ -78,29 +82,104 @@
                 }
                 else if (request.Url.AbsolutePath == "/Panels")
                 {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    response.ContentType = "application/json";
+
                     List<string> panels = DynamicHtmlLoader.GetFileNamesFromFolder(DynamicHtmlLoader.PANEL_FOLDER);
 
                     string json = JsonConvert.SerializeObject(panels, Formatting.None);
                     buffer = Encoding.UTF8.GetBytes(json);
                 }
                 else if (request.Url.AbsolutePath.StartsWith("/Panel/"))
-                {
+                {   
+                    if (request.Url.AbsolutePath.EndsWith("png"))
+                    {
+                        response.ContentType = "image/png";
+                    }
+                    else
+                    {
+                        response.ContentType = "text/html";
+                    }                    
+
                     string absolutePanelPath = Path.Combine(ROOT_DIRECTORY, request.Url.AbsolutePath.TrimStart('/').Replace("/", "\\"));
                     if (File.Exists(absolutePanelPath))
                     {
-                        buffer = Encoding.UTF8.GetBytes(File.ReadAllText(absolutePanelPath));
+                        response.StatusCode = (int)HttpStatusCode.OK;
 
-                        Logging.Info($"Responsed Panel: '{request.Url.AbsolutePath}'");
+                        buffer = File.ReadAllBytes(absolutePanelPath);
+
+                        if (request.Url.AbsolutePath.EndsWith("html"))
+                        {
+                            Logging.Info($"Responsed Panel: '{request.Url.AbsolutePath}'");
+                        }
                     }
                     else
                     {
                         buffer = Encoding.UTF8.GetBytes("Panel not found...");
 
-                        Logging.Warning($"Request of unkonwn Panel: '{request.Url.AbsolutePath}'");
+                        if (request.Url.AbsolutePath.EndsWith("html"))
+                        {
+                            Logging.Warning($"Request of unkonwn Panel: '{request.Url.AbsolutePath}'");
+                        }
+                    }
+                }
+                else if (request.Url.AbsolutePath.StartsWith("/Icon/"))
+                {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+
+                    if (request.Url.AbsolutePath.EndsWith("svg")) {
+                        response.ContentType = "image/svg+xml";
+                    }
+                    else
+                    {
+                        response.ContentType = "image/png";
+                    }
+
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    string resourceName = "Indabo.Host.Content.GUI.Frame" + request.Url.AbsolutePath.Replace('/', '.');
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        using (BinaryReader reader = new BinaryReader(stream))
+                        {
+                            buffer = reader.ReadBytes((int)stream.Length);
+                        }
+                    }
+                }
+                else if (request.Url.AbsolutePath == "/Frame.js")
+                {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    response.ContentType = "application/javascript";
+
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    string resourceName = "Indabo.Host.Content.GUI.Frame.Frame.js";
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        using (BinaryReader reader = new BinaryReader(stream))
+                        {
+                            buffer = reader.ReadBytes((int)stream.Length);
+                        }
+                    }
+                }
+                else if (request.Url.AbsolutePath == "/Frame.css")
+                {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    response.ContentType = "text/css";
+
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    string resourceName = "Indabo.Host.Content.GUI.Frame.Frame.css";
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        using (BinaryReader reader = new BinaryReader(stream))
+                        {
+                            buffer = reader.ReadBytes((int)stream.Length);
+                        }
                     }
                 }
                 else
                 {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    response.ContentType = "text/html";
+
                     Assembly assembly = Assembly.GetExecutingAssembly();
                     string resourceName = "Indabo.Host.Content.GUI.Frame.Frame.html";
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
@@ -130,6 +209,15 @@
             catch (Exception ex)
             {
                 Logging.Error("Error while handling callback!", ex);
+
+                HttpListenerResponse response = context.Response;
+
+                response.StatusCode = (int)HttpStatusCode.NotFound;
+
+                response.ContentLength64 = 0;
+                Stream output = response.OutputStream;
+                output.Write(new byte[] { }, 0, 0);
+                output.Close();
             }
         }
 

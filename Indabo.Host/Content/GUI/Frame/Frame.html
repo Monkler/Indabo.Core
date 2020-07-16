@@ -11,11 +11,36 @@
 
     <title>Indabo</title>
 
+    <script language="javascript" type="text/javascript" src="Frame.js"></script>
+
+    <link rel="stylesheet" href="Font/opensans.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="Frame.css">
+
     %Library%
 
     %Widget%
 </head>
 <body>
+    <div class="Indabo-Frame-Top">
+        <div class="Indabo-Frame-Top-Logo">
+
+        </div>
+        <div class="Indabo-Frame-Top-Main">
+            <div class="Indabo-Frame-Top-Main-Text">Indabo</div>
+        </div>
+    </div>
+    <div class="Indabo-Frame-Content"></div>
+    <div class="Indabo-Frame-Menu"> </div>
+    <div class="Indabo-Frame-Bottom">
+        <div class="Indabo-Frame-Bottom-Icon Indabo-Frame-Bottom-Status"></div>
+        <div class="Indabo-Frame-Bottom-Logging">No connection...</div>
+
+        <div class="Indabo-Frame-Bottom-Icon Indabo-Frame-Bottom-Help"></div>
+        <div class="Indabo-Frame-Bottom-Icon Indabo-Frame-Bottom-Feedback"></div>
+        <div class="Indabo-Frame-Bottom-Version">0000-X0</div>
+        <div class="Indabo-Frame-Bottom-Version-Label">Version:</div>
+    </div>
+
     <!-- Use conditional comments to check for old IE9 versions (Note: IE9 is the last version that supported conditional comments). -->
     <div id="ie9ConditionalCommentContainer">
         <!--[if lte IE 9]>
@@ -50,9 +75,6 @@
             document.getElementById("JavascriptWarning").remove();
         })();
     </script>
-    
-    <!-- TODO -->
-
     <!--<![endif]-->
 </body>
 </html>
