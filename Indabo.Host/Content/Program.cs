@@ -18,8 +18,16 @@
 
             Program.config = ConfigFile.Load<Config>("Indabo");
 
-            Program.webServer = new WebServer(Program.config.Port);
-            Program.webServer.Start();
+            try
+            {
+                Program.webServer = new WebServer(Program.config.Port);
+                Program.webServer.Start();
+            }
+            catch(Exception ex)
+            {
+                Logging.Error("Error while starting the WebServer: ", ex);
+            }
+
         }
 
         public static void Stop()
