@@ -4,12 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Indabo.Windows.Launcher"
+        xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
         Title="Indabo"        
         MaxHeight="900" MaxWidth="1600" WindowStartupLocation="CenterScreen"
         Icon="/Indabo.Launcher;component/Resources/Icon/Indabo.png"
         Closing="OnWindowClosing">
     <Grid>
-        
+        <cefSharp:ChromiumWebBrowser
+              Address="{Binding WebAddress, ElementName=MainWindow1, Mode=TwoWay}"
+              Title="{Binding WebTitle, ElementName=MainWindow1,Mode=OneWayToSource}"
+              AllowDrop="True"
+              WebBrowser="{Binding WebBrowser, ElementName=MainWindow1, Mode=OneWayToSource}">
+        </cefSharp:ChromiumWebBrowser>
     </Grid>
 </Window>
