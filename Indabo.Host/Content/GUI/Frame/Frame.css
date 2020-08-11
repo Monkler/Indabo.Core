@@ -65,10 +65,19 @@ body {
 }
 
 .Indabo-Frame-Menu {
+    position: relative;
+
     width: 45px;
     height: calc(100% - 35px - 20px);
 
     background-color: #333333;
+
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.Indabo-Frame-Menu::-webkit-scrollbar {
+    display: none;
 }
 
 .Indabo-Frame-Menu-Entry {
@@ -84,18 +93,61 @@ body {
 }
 
 .Indabo-Frame-Menu-Entry:hover {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: #666666;
 }
 
 .Indabo-Frame-Menu-Entry-Selected {
     background-color: #BD8D00 !important;
 }
 
+.Indabo-Frame-Menu-Entry-ScrollButton {
+    display: none;
+
+    position: fixed;
+    position: sticky;
+
+    left: 0px;
+
+    width: 45px;
+    height: 20px;
+
+    background-color: #424242;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60% auto;
+
+    cursor: pointer;
+}
+
+.Indabo-Frame-Menu-Entry-ScrollButton:hover {
+    background-color: #666666;
+}
+
+.Indabo-Frame-Menu-Entry-ScrollButton-Disabled {
+    cursor: default;
+
+    background-color: #333333 !important;
+
+    background-image: none !important;
+}
+
+.Indabo-Frame-Menu-Entry-ScrollButton-Up {
+    top: 0px;
+
+    background-image: url("Icon/ScrollUp.svg");
+}
+
+.Indabo-Frame-Menu-Entry-ScrollButton-Down {
+    bottom: 0px;
+
+    background-image: url("Icon/ScrollDown.svg");
+}
+
 .Indabo-Frame-Content {
     width: calc(100% - 45px);
     height: calc(100% - 35px - 20px);
     float: right;
-
     overflow: auto;
 }
 

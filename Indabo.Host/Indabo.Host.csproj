@@ -23,6 +23,8 @@
     <None Remove="Content\GUI\Frame\Icon\Feedback.svg" />
     <None Remove="Content\GUI\Frame\Icon\Help.svg" />
     <None Remove="Content\GUI\Frame\Icon\MenuSymbol.svg" />
+    <None Remove="Content\GUI\Frame\Icon\ScrollDown.svg" />
+    <None Remove="Content\GUI\Frame\Icon\ScrollUp.svg" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +37,8 @@
     <EmbeddedResource Include="Content\GUI\Frame\Icon\Feedback.svg" />
     <EmbeddedResource Include="Content\GUI\Frame\Icon\Help.svg" />
     <EmbeddedResource Include="Content\GUI\Frame\Icon\MenuSymbol.svg" />
+    <EmbeddedResource Include="Content\GUI\Frame\Icon\ScrollDown.svg" />
+    <EmbeddedResource Include="Content\GUI\Frame\Icon\ScrollUp.svg" />
   </ItemGroup>
 
   <ItemGroup>
