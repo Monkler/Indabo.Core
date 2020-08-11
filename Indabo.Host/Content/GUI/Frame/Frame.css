@@ -74,6 +74,9 @@ body {
 
     overflow-x: hidden;
     overflow-y: scroll;
+
+    -ms-overflow-style: none;  
+    scrollbar-width: none; 
 }
 
 .Indabo-Frame-Menu::-webkit-scrollbar {

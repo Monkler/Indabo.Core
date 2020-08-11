@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             menuEntry.classList.add("Indabo-Frame-Menu-Entry-Selected");
 
-                            content.innerHTML = "";
                             let request = new XMLHttpRequest();
                             request.open("GET", "./Panel/" + panel + ".html");
                             request.addEventListener("load", function () {
@@ -94,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 request.send();
             }
 
-            if (panels.length != 0) {
+            if (panels.length !== 0) {
                 addMenuEntry(0);
             }
 		} 
@@ -112,8 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let found = false;
         for (let menuEntry of document.getElementsByClassName("Indabo-Frame-Menu-Entry")) {
-            console.log(menuEntry.id, "indabo-panel-" + selectedPanel);
-            if (menuEntry.id == "indabo-panel-" + selectedPanel) {
+            if (menuEntry.id === "indabo-panel-" + selectedPanel) {
                 found = true;
                 menuEntry.scrollIntoView();
 
@@ -125,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        if (found == false) {
+        if (found === false) {
             document.getElementsByClassName("Indabo-Frame-Menu-Entry")[0].click();
         }
     }
