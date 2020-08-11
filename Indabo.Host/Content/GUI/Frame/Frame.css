@@ -95,6 +95,8 @@ body {
     width: calc(100% - 45px);
     height: calc(100% - 35px - 20px);
     float: right;
+
+    overflow: auto;
 }
 
 .Indabo-Frame-Bottom {

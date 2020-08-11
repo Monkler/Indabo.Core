@@ -12,9 +12,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             console.log("Panels received: ", panels);
 
+            let isFirst = true;
             for (let panel of panels) {                
                 let menuEntry = document.createElement("div");
-                menuEntry.classList.add("Indabo-Frame-Menu-Entry");                
+                menuEntry.classList.add("Indabo-Frame-Menu-Entry");    
 
                 let request = new XMLHttpRequest();
                 request.open("GET", "./Panel/" + panel + ".png");
@@ -41,6 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                             request.send();
                         });
+
+                        if (isFirst == true) {
+                            isFirst = false;
+                            document.getElementsByClassName("Indabo-Frame-Menu-Entry")[0].click();
+                        }
                     }
                 });
                 request.send();
