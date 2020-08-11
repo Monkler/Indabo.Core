@@ -102,6 +102,7 @@
                     }                    
 
                     string absolutePanelPath = Path.Combine(ROOT_DIRECTORY, request.Url.AbsolutePath.TrimStart('/').Replace("/", "\\"));
+                    absolutePanelPath = Uri.UnescapeDataString(absolutePanelPath);
                     if (File.Exists(absolutePanelPath))
                     {
                         response.StatusCode = (int)HttpStatusCode.OK;
