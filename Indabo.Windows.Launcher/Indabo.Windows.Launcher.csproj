@@ -133,10 +133,12 @@
     <ProjectReference Include="..\Indabo.Core\Indabo.Core.csproj">
       <Project>{2667236a-dba0-40a2-866c-c8b87858909a}</Project>
       <Name>Indabo.Core</Name>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Indabo.Host\Indabo.Host.csproj">
       <Project>{6af49227-62f7-4c44-b447-1c0683af9d41}</Project>
       <Name>Indabo.Host</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -12,11 +12,14 @@
 
         public IWpfWebBrowser WebBrowser { get; set; }
 
-        public MainWindow()
+        static MainWindow() 
         {
             AssemblyResolver assemblyResolver = new AssemblyResolver(Assembly.GetExecutingAssembly());
             assemblyResolver.Activate();
+        }
 
+        public MainWindow()
+        {
             Host.Program.Start(new string[] { });
 
             this.WebAddress = "http://localhost:" + Host.Program.Config.Port;

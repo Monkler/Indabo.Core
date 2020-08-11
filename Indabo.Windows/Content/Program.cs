@@ -6,30 +6,19 @@
 
     public class Program
     {
-#if DEBUG
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-#endif
+        static Program()
+        {
+            AssemblyResolver assemblyResolver = new AssemblyResolver(Assembly.GetExecutingAssembly());
+            assemblyResolver.Activate();
+        }
 
         public static void Main(string[] args)
         {
-#if DEBUG
-            AllocConsole();
-#endif
+            Host.Program.Start(args);
 
-            AssemblyResolver assemblyResolver = new AssemblyResolver(Assembly.GetExecutingAssembly());
-            assemblyResolver.Activate();
+            while (Console.ReadKey().Key != ConsoleKey.Escape) { }
 
-            void StartAction()
-            {
-                Host.Program.Start(args);
-
-                while (Console.ReadKey().Key != ConsoleKey.Escape) { }
-
-                Host.Program.Stop();
-            }
-            StartAction();
+            Host.Program.Stop();
         }
     }
 }
