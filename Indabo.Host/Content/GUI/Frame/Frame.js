@@ -1,6 +1,27 @@
 //document.addEventListener('contextmenu', event => event.preventDefault());
 
 document.addEventListener('DOMContentLoaded', function () {
+    let widgets = [];
+    var scriptTags = document.getElementsByTagName('script');
+    for (let widget of scriptTags) {
+        if (widget.src.startsWith(window.location.origin + "/Widget/")) {
+            widgets.push(widget.src.substring((window.location.origin + "/Widget/").length, widget.src.length - 3));
+        }
+    }
+
+    console.log("Widgets loaded: ", widgets);
+
+    let updateWidgets = function () {
+        for (let widget of widgets) {
+            let widgetClass = eval(widget);
+
+            let widgetElements = document.querySelectorAll('[indabo-widget="' + widget + '"]');
+            for (let widgetElement of widgetElements) {
+                new widgetClass(widgetElement);
+            }
+        }
+    }
+
     let content = document.getElementsByClassName("Indabo-Frame-Content")[0];
     let menu = document.getElementsByClassName("Indabo-Frame-Menu")[0];
 
@@ -22,11 +43,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             console.log("Panels received: ", panels);
 
-            let isFirst = true;
             let addMenuEntry = function(panelCounter) {     
                 let panel = panels[panelCounter];
 
                 let menuEntry = document.createElement("div");
+                menuEntry.id = "indabo-panel-" + panel;
                 menuEntry.classList.add("Indabo-Frame-Menu-Entry");    
 
                 let request = new XMLHttpRequest();
@@ -37,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         menu.append(menuEntry);
 
                         menuEntry.addEventListener("click", function () {
+                            window.location = "#" + panel;
+
                             let otherElements = document.getElementsByClassName("Indabo-Frame-Menu-Entry");
 
                             for (otherElement of otherElements) {
@@ -45,20 +68,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             menuEntry.classList.add("Indabo-Frame-Menu-Entry-Selected");
 
+                            content.innerHTML = "";
                             let request = new XMLHttpRequest();
                             request.open("GET", "./Panel/" + panel + ".html");
                             request.addEventListener("load", function () {
                                 if (request.status >= 200 && request.status < 300) {
                                     content.innerHTML = request.responseText;
+                                    updateWidgets();
                                 }
+                            });
+                            request.addEventListener("error", function () {
+                                content.innerHTML = "";
                             });
                             request.send();
                         });
-
-                        if (isFirst == true) {
-                            isFirst = false;
-                            document.getElementsByClassName("Indabo-Frame-Menu-Entry")[0].click();
-                        }
                     }
 
                     if (panelCounter < panels.length - 1) {
@@ -84,6 +107,27 @@ document.addEventListener('DOMContentLoaded', function () {
     let onPanelsLoaded = function() {
         menu.append(scrollButtonDown);
         checkMenuScrollable();
+
+        let selectedPanel = unescape(window.location.href.substring((window.location.origin).length + 2, window.location.href.length));
+
+        let found = false;
+        for (let menuEntry of document.getElementsByClassName("Indabo-Frame-Menu-Entry")) {
+            console.log(menuEntry.id, "indabo-panel-" + selectedPanel);
+            if (menuEntry.id == "indabo-panel-" + selectedPanel) {
+                found = true;
+                menuEntry.scrollIntoView();
+
+                if (Math.ceil(menu.scrollTop) < (menu.scrollHeight - menu.clientHeight)) {
+                    menu.scrollTop -= 40;
+                }
+
+                menuEntry.click();
+            }
+        }
+
+        if (found == false) {
+            document.getElementsByClassName("Indabo-Frame-Menu-Entry")[0].click();
+        }
     }
 
     let checkMenuScrollable = function() {

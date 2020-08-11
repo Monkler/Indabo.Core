@@ -13,12 +13,16 @@ namespace Indabo.Host
 
             if (Directory.Exists(rootFolder))
             {
+                string rootFolderAbsolutePath = (new FileInfo(rootFolder)).FullName + "\\";
+
                 foreach (string file in Directory.GetFiles(rootFolder, "*.*", SearchOption.AllDirectories))
                 {
                     if (file.EndsWith(".js"))
                     {
-                        script += "<script type=\"application/javascript\" charset=\"utf-8\">";
-                        script += File.ReadAllText(file);
+                        string absoulteFilePath = new FileInfo(file).FullName.Replace(".html", string.Empty);
+
+                        script += "<script src=\"/Widget/" + absoulteFilePath.Replace(rootFolderAbsolutePath, string.Empty).Replace("\\", "/")  + "\" type=\"application/javascript\" charset=\"utf-8\">";
+                        //script += File.ReadAllText(file);
                         script += "</script>";
                     }
                 }                

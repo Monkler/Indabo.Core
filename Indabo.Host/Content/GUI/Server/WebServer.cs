@@ -90,7 +90,7 @@
                     string json = JsonConvert.SerializeObject(panels, Formatting.None);
                     buffer = Encoding.UTF8.GetBytes(json);
                 }
-                else if (request.Url.AbsolutePath.StartsWith("/Panel/"))
+                else if (request.Url.AbsolutePath.StartsWith("/Panel/") || request.Url.AbsolutePath.StartsWith("/Widget/"))
                 {   
                     if (request.Url.AbsolutePath.EndsWith("png"))
                     {
@@ -111,7 +111,7 @@
 
                         if (request.Url.AbsolutePath.EndsWith("html"))
                         {
-                            Logging.Info($"Responsed Panel: '{request.Url.AbsolutePath}'");
+                            Logging.Info($"Responsed Panel/Widget: '{request.Url.AbsolutePath}'");
                         }
                     }
                     else
@@ -120,7 +120,7 @@
 
                         if (request.Url.AbsolutePath.EndsWith("html"))
                         {
-                            Logging.Warning($"Request of unkonwn Panel: '{request.Url.AbsolutePath}'");
+                            Logging.Warning($"Request of unkonwn Panel/Widget: '{request.Url.AbsolutePath}'");
                         }
                     }
                 }
@@ -211,14 +211,21 @@
             {
                 Logging.Error("Error while handling callback!", ex);
 
-                HttpListenerResponse response = context.Response;
+                try
+                {
+                    HttpListenerResponse response = context.Response;
 
-                response.StatusCode = (int)HttpStatusCode.NotFound;
+                    response.StatusCode = (int)HttpStatusCode.NotFound;
 
-                response.ContentLength64 = 0;
-                Stream output = response.OutputStream;
-                output.Write(new byte[] { }, 0, 0);
-                output.Close();
+                    response.ContentLength64 = 0;
+                    Stream output = response.OutputStream;
+                    output.Write(new byte[] { }, 0, 0);
+                    output.Close();
+                }
+                catch (Exception)
+                {
+                    // Nothing to do...
+                }
             }
         }
 
