@@ -23,7 +23,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         menuEntry.style.backgroundImage = "url('./Panel/" + panel + ".png')";
                         menu.append(menuEntry);
 
-                        menuEntry.addEventListener("click", function () {                            
+                        menuEntry.addEventListener("click", function () {
+                            let otherElements = document.getElementsByClassName("Indabo-Frame-Menu-Entry");
+
+                            for (otherElement of otherElements) {
+                                otherElement.classList.remove("Indabo-Frame-Menu-Entry-Selected");     
+                            }
+
+                            menuEntry.classList.add("Indabo-Frame-Menu-Entry-Selected");     
+
                             let request = new XMLHttpRequest();
                             request.open("GET", "./Panel/" + panel + ".html");
                             request.addEventListener("load", () => {
