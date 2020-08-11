@@ -32,7 +32,14 @@
 
         public static void Stop()
         {
-            Program.webServer.Stop();
+            try
+            {
+                Program.webServer.Stop();
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Error while stopping the WebServer: ", ex);
+            }
 
             Logging.Info($"Indabo stopped!");
         }
