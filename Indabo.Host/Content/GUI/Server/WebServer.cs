@@ -21,7 +21,7 @@
         public WebServer(int port)
         {
             this.listener = new HttpListener();
-            this.listener.Prefixes.Add($"http://localhost:{port}/");
+            this.listener.Prefixes.Add($"http://*:{port}/");
 
             Logging.Info($"Webserver initalized with Port '{port}'!");
         }

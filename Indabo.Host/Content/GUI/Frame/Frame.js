@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
             scrollButtonUp.classList.remove("Indabo-Frame-Menu-Entry-ScrollButton-Disabled");
         }
 
-        if (menu.scrollTop >= (menu.scrollHeight - menu.clientHeight)) {
+        if (Math.ceil(menu.scrollTop) >= (menu.scrollHeight - menu.clientHeight)) {
             scrollButtonDown.classList.add("Indabo-Frame-Menu-Entry-ScrollButton-Disabled");
         }
         else {
