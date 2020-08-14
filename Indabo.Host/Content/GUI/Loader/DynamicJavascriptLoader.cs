@@ -7,21 +7,23 @@ namespace Indabo.Host
         public const string WIDGET_FOLDER = "Widget";
         public const string LIBRARY_FOLDER = "Library";
 
-        public static string LoadFromFolderAsHtmlTags(string rootFolder)
+        public static string LoadFromFolderAsHtmlTags(string rootFolder, string subFolder)
         {
             string script = string.Empty;
 
-            if (Directory.Exists(rootFolder))
-            {
-                string rootFolderAbsolutePath = (new FileInfo(rootFolder)).FullName + "\\";
+            string absolutePath = Path.Combine(rootFolder, subFolder);
 
-                foreach (string file in Directory.GetFiles(rootFolder, "*.*", SearchOption.AllDirectories))
+            if (Directory.Exists(absolutePath))
+            {
+                string rootFolderAbsolutePath = (new FileInfo(absolutePath)).FullName + "\\";
+
+                foreach (string file in Directory.GetFiles(absolutePath, "*.*", SearchOption.AllDirectories))
                 {
                     if (file.EndsWith(".js"))
                     {
                         string absoulteFilePath = new FileInfo(file).FullName.Replace(".html", string.Empty);
 
-                        script += "<script src=\"/Widget/" + absoulteFilePath.Replace(rootFolderAbsolutePath, string.Empty).Replace("\\", "/")  + "\" type=\"application/javascript\" charset=\"utf-8\">";
+                        script += "<script src=\"/" + subFolder + "/" + absoulteFilePath.Replace(rootFolderAbsolutePath, string.Empty).Replace("\\", "/")  + "\" type=\"application/javascript\" charset=\"utf-8\">";
                         //script += File.ReadAllText(file);
                         script += "</script>";
                     }

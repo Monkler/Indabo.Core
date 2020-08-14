@@ -7,10 +7,13 @@
 
     public class Program
     {
-        private static WebServer webServer;
         private static Config config;
 
-        public static Config Config { get => config; set => config = value; }
+        private static WebServer webServer;
+
+        private static SQLReader sqlReader;
+
+        internal static Config Config { get => config; set => config = value; }
 
         public static void Start(string[] args)
         {
@@ -28,6 +31,16 @@
                 Logging.Error("Error while starting the WebServer: ", ex);
             }
 
+            try
+            {
+                Program.sqlReader = new SQLReader();
+                Program.sqlReader.Start();
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Error while starting the SQLReader: ", ex);
+            }
+
         }
 
         public static void Stop()
@@ -39,6 +52,15 @@
             catch (Exception ex)
             {
                 Logging.Error("Error while stopping the WebServer: ", ex);
+            }
+
+            try
+            {
+                Program.sqlReader.Stop();
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Error while stopping the SQLReader: ", ex);
             }
 
             Logging.Info($"Indabo stopped!");

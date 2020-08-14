@@ -17,8 +17,6 @@
   <ItemGroup>
     <Folder Include="Content\Communication\Controller\" />
     <Folder Include="Content\Communication\Notifier\" />
-    <Folder Include="Content\Communication\Reader\" />
-    <Folder Include="Content\Communication\Websocket\" />
     <Folder Include="Content\DBManager\" />
   </ItemGroup>
 

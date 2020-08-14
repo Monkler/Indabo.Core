@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
+    using System.Net.WebSockets;
     using System.Reflection;
     using System.Text;
     using System.Threading;
+    using System.Threading.Tasks;
     using Indabo.Core;
     using Newtonsoft.Json;
 
@@ -21,7 +23,7 @@
         public WebServer(int port)
         {
             this.listener = new HttpListener();
-            this.listener.Prefixes.Add($"http://*:{port}/");
+            this.listener.Prefixes.Add($"http://localhost:{port}/");
 
             Logging.Info($"Webserver initalized with Port '{port}'!");
         }
@@ -44,7 +46,14 @@
 
                         new Thread(() =>
                         {
-                            this.HandleCallback(context);
+                            if (context.Request.IsWebSocketRequest)
+                            {
+                                WebSocketHandler.Instance.HandleWebSocketRequestAsync(context);
+                            }
+                            else
+                            {
+                                this.HandleCallback(context);
+                            }                            
                         }).Start();
                     }
                     catch (Exception ex)
@@ -90,11 +99,15 @@
                     string json = JsonConvert.SerializeObject(panels, Formatting.None);
                     buffer = Encoding.UTF8.GetBytes(json);
                 }
-                else if (request.Url.AbsolutePath.StartsWith("/Panel/") || request.Url.AbsolutePath.StartsWith("/Widget/"))
+                else if (request.Url.AbsolutePath.StartsWith("/Panel/") || request.Url.AbsolutePath.StartsWith("/Widget/") || request.Url.AbsolutePath.StartsWith("/Library/"))
                 {   
                     if (request.Url.AbsolutePath.EndsWith("png"))
                     {
                         response.ContentType = "image/png";
+                    }
+                    else if (request.Url.AbsolutePath.EndsWith("js"))
+                    {
+                        response.ContentType = "application/javascript";
                     }
                     else
                     {
@@ -189,8 +202,8 @@
                         {
                             string frame = reader.ReadToEnd();
 
-                            string libraries = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Path.Combine(ROOT_DIRECTORY, DynamicJavascriptLoader.LIBRARY_FOLDER));
-                            string widgets = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Path.Combine(ROOT_DIRECTORY, DynamicJavascriptLoader.WIDGET_FOLDER));
+                            string libraries = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(ROOT_DIRECTORY, DynamicJavascriptLoader.LIBRARY_FOLDER);
+                            string widgets = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(ROOT_DIRECTORY, DynamicJavascriptLoader.WIDGET_FOLDER);
 
                             frame = frame.Replace("%Library%", libraries);
                             frame = frame.Replace("%Widget%", widgets);
