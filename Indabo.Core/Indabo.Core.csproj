@@ -15,11 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Content\Communication\Controller\" />
-    <Folder Include="Content\Communication\Notifier\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 

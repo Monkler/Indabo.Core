@@ -42,8 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Content\Communication\Controller\" />
-    <Folder Include="Content\Communication\Notifier\" />
     <Folder Include="Content\UserManager\" />
     <Folder Include="Content\PluginManager\" />
   </ItemGroup>

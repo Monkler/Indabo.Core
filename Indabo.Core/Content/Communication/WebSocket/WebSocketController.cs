@@ -2,18 +2,20 @@
 {
     public class WebSocketController : IWebSocket
     {
+        private static WebSocketController instance;
+
         private WebSocketController(string url = "/Controller") : base(url) { }
 
         public static IWebSocket Instance
         {
             get
             {
-                if (IWebSocket.instance == null)
+                if (WebSocketController.instance == null)
                 {
-                    IWebSocket.instance = new WebSocketController();
+                    WebSocketController.instance = new WebSocketController();
                 }
 
-                return IWebSocket.instance;
+                return WebSocketController.instance;
             }
         }
     }

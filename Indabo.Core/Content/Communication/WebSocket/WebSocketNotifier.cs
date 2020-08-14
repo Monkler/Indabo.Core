@@ -2,18 +2,20 @@
 {
     public class WebSocketNotifier : IWebSocket
     {
+        private static WebSocketNotifier instance;
+
         private WebSocketNotifier(string url = "/Notifier") : base(url) {}
 
         public static IWebSocket Instance
         {
             get
             {
-                if (IWebSocket.instance == null)
+                if (WebSocketNotifier.instance == null)
                 {
-                    IWebSocket.instance = new WebSocketNotifier();
+                    WebSocketNotifier.instance = new WebSocketNotifier();
                 }
 
-                return IWebSocket.instance;
+                return WebSocketNotifier.instance;
             }
         }
     }

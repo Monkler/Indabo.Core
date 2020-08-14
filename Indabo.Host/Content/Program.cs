@@ -39,8 +39,7 @@
             catch (Exception ex)
             {
                 Logging.Error("Error while starting the SQLReader: ", ex);
-            }
-
+            }            
         }
 
         public static void Stop()

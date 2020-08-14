@@ -19,13 +19,12 @@
 
         Dictionary<string, List<WebSocket>> webSockets = new Dictionary<string, List<WebSocket>>();
 
-        private WebSocketHandler() {}
+        private WebSocketHandler() { }
 
         public async void HandleWebSocketRequestAsync(HttpListenerContext context)
         {
-            WebSocket webSocket = null;
             WebSocketConnectionEventArgs webSocketConnectionEventArgs = new WebSocketConnectionEventArgs(context, context.Request.RawUrl);
-            
+
             try
             {
                 this.Opened?.Invoke(this, webSocketConnectionEventArgs);
@@ -50,35 +49,37 @@
 
                 WebSocketContext webSocketContext = await context.AcceptWebSocketAsync(null);
 
-                webSocket = webSocketContext.WebSocket;
+                webSocketConnectionEventArgs.WebSocket = webSocketContext.WebSocket;
                 if (this.webSockets.ContainsKey(webSocketConnectionEventArgs.Url) == false)
                 {
                     this.webSockets.Add(webSocketConnectionEventArgs.Url, new List<WebSocket>());
                 }
-                this.webSockets[webSocketConnectionEventArgs.Url].Add(webSocket);
+                this.webSockets[webSocketConnectionEventArgs.Url].Add(webSocketConnectionEventArgs.WebSocket);
 
                 string message = string.Empty;
 
                 byte[] receiveBuffer = new byte[1024];
-                while (webSocket.State == WebSocketState.Open)
+                while (webSocketConnectionEventArgs.WebSocket.State == WebSocketState.Open)
                 {
-                    WebSocketReceiveResult receiveResult = await webSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
-                    
+                    WebSocketReceiveResult receiveResult = await webSocketConnectionEventArgs.WebSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+
                     if (receiveResult.MessageType == WebSocketMessageType.Close)
                     {
-                        await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                        await webSocketConnectionEventArgs.WebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
                     }
                     else if (receiveResult.MessageType != WebSocketMessageType.Text)
                     {
-                        await webSocket.CloseAsync(WebSocketCloseStatus.InvalidMessageType, "Only accept text frame", CancellationToken.None);
-                    }
-                    else if (receiveResult.EndOfMessage == false)
-                    {
-                        message += Encoding.UTF8.GetString(receiveBuffer);
+                        await webSocketConnectionEventArgs.WebSocket.CloseAsync(WebSocketCloseStatus.InvalidMessageType, "Only accept text frame", CancellationToken.None);
                     }
                     else
                     {
-                        this.Received?.Invoke(this, new WebSocketReceivedEventArgs(webSocket, webSocketConnectionEventArgs.Url, message));
+                        message += Encoding.UTF8.GetString(receiveBuffer);
+
+                        if (receiveResult.EndOfMessage)
+                        {
+                            this.Received?.Invoke(this, new WebSocketReceivedEventArgs(webSocketConnectionEventArgs.WebSocket, webSocketConnectionEventArgs.Url, message.Trim('\0')));
+                            message = string.Empty;
+                        }
                     }
                 }
 
@@ -87,12 +88,13 @@
             {
                 Logging.Error("Error while handling Websocket request!", ex);
             }
-            finally {
-                if (webSocket != null)
+            finally
+            {
+                if (webSocketConnectionEventArgs.WebSocket != null)
                 {
                     this.Closed?.Invoke(this, webSocketConnectionEventArgs);
-                    this.webSockets[webSocketConnectionEventArgs.Url].Remove(webSocket);
-                    webSocket.Dispose();
+                    this.webSockets[webSocketConnectionEventArgs.Url].Remove(webSocketConnectionEventArgs.WebSocket);
+                    webSocketConnectionEventArgs.WebSocket.Dispose();
                 }
             }
         }
@@ -103,8 +105,8 @@
             {
                 byte[] messageBuffer = Encoding.UTF8.GetBytes(message);
                 foreach (WebSocket webSocket in this.webSockets[url])
-                {                   
-                    webSocket.SendAsync(new ArraySegment<byte>(messageBuffer, 0, messageBuffer.Length), WebSocketMessageType.Binary, true, CancellationToken.None);
+                {
+                    WebSocketHandler.SendTo(webSocket, messageBuffer);
                 }
             }
             else
@@ -113,24 +115,35 @@
             }
         }
 
-        public static void SendTo(WebSocket webSocket, string message)
+        public static void SendTo(WebSocket webSocket, string message, int? length = null)
         {
             WebSocketHandler.SendTo(webSocket, Encoding.UTF8.GetBytes(message));
         }
 
-        public static void SendTo(WebSocket webSocket, byte[] messageBuffer)
+        public static void SendTo(WebSocket webSocket, byte[] messageBuffer, int? length = null)
         {
-            for (int i = 0; i < messageBuffer.Length; i += 1024)
+            try
             {
-                int length = 1024;
-                if (i + length > messageBuffer.Length)
+                if (length == null)
                 {
-                    length = messageBuffer.Length - i;
+                    length = messageBuffer.Length;
                 }
 
-                webSocket.SendAsync(new ArraySegment<byte>(messageBuffer, i, length), WebSocketMessageType.Text, true, CancellationToken.None);
+                for (int i = 0; i < messageBuffer.Length; i += 1024)
+                {
+                    int currentLEngth = 1024;
+                    if (i + currentLEngth > length)
+                    {
+                        currentLEngth = messageBuffer.Length - i;
+                    }
+
+                    webSocket.SendAsync(new ArraySegment<byte>(messageBuffer, i, currentLEngth), WebSocketMessageType.Text, true, CancellationToken.None);
+                }
             }
-            
+            catch (Exception ex)
+            {
+                Logging.Error($"Could not send message to webSocket!", ex);
+            }
         }
 
         public static WebSocketHandler Instance

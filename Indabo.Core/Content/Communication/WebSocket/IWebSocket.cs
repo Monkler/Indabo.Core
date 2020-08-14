@@ -4,9 +4,9 @@ namespace Indabo.Core
 {
     public class IWebSocket
     {
-        protected static IWebSocket instance;
-
+        public event EventHandler<WebSocketConnectionEventArgs> Opened;
         public event EventHandler<WebSocketReceivedEventArgs> Received;
+        public event EventHandler<WebSocketConnectionEventArgs> Closed;
 
         private string url;
 
@@ -14,21 +14,35 @@ namespace Indabo.Core
         {
             this.url = url;
 
-            WebSocketHandler.Instance.Opened += this.OnInstanceOpened;
-            WebSocketHandler.Instance.Received += this.OnInstanceReceived;
+            WebSocketHandler.Instance.Opened += this.OnOpened;
+            WebSocketHandler.Instance.Received += this.OnReceived;
+            WebSocketHandler.Instance.Closed += this.OnClosed;
         }
 
-        private void OnInstanceOpened(object sender, WebSocketConnectionEventArgs e)
+        private void OnClosed(object sender, WebSocketConnectionEventArgs e)
+        {
+            if (e.Url == this.url)
+            {
+                this.Closed?.Invoke(this, e);
+            }
+        }
+
+        private void OnOpened(object sender, WebSocketConnectionEventArgs e)
         {
             if (e.Url == this.url)
             {
                 e.IsHandled = true;
+
+                this.Opened?.Invoke(this, e);
             }
         }
 
-        private void OnInstanceReceived(object sender, WebSocketReceivedEventArgs e)
+        private void OnReceived(object sender, WebSocketReceivedEventArgs e)
         {
-            this.Received?.Invoke(this, e);
+            if (e.Url == this.url)
+            {
+                this.Received?.Invoke(this, e);
+            }
         }
 
         public void Send(string message)
