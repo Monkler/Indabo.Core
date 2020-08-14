@@ -17,7 +17,6 @@
   <ItemGroup>
     <Folder Include="Content\Communication\Controller\" />
     <Folder Include="Content\Communication\Notifier\" />
-    <Folder Include="Content\DBManager\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -42,7 +42,7 @@
                     {
                         HttpListenerContext context = this.listener.GetContext();
 
-                        Logging.Info("New request from: " + context.Request.UserHostName);
+                        Logging.Info($"New request: {context.Request.Url} ({ context.Request.UserHostName})");
 
                         new Thread(() =>
                         {
