@@ -1,4 +1,4 @@
-﻿namespace Indabo.Windows
+﻿namespace Indabo.Linux
 {
     using System;
     using System.Reflection;

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Resources\SourceCode\AssemblyResolver.cs" Link="Content\AssemblyResolver\AssemblyResolver.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\Indabo.Core\bin\Release\netstandard2.0\Indabo.Core.dll" Link="Content\Resources\Assembly\Indabo.Core.dll" />
+    <EmbeddedResource Include="..\Indabo.Host\bin\Release\netstandard2.0\Indabo.Host.dll" Link="Content\Resources\Assembly\Indabo.Host.dll" />
+    <EmbeddedResource Include="..\Resources\Assembly\Newtonsoft.Json.dll" Link="Content\Resources\Assembly\Newtonsoft.Json.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Content\AssemblyResolver\" />
+    <Folder Include="Content\Resources\Assembly\" />
+    <Folder Include="Content\Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Indabo.Core\Indabo.Core.csproj" />
+    <ProjectReference Include="..\Indabo.Host\Indabo.Host.csproj" />
+  </ItemGroup>
+
+</Project>
