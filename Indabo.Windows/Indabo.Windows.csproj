@@ -82,6 +82,33 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\Resources\Assembly\MySqlConnector.dll">
+      <Link>Resources\Assembly\MySqlConnector.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\Microsoft.Data.Sqlite.dll">
+      <Link>Resources\Assembly\Microsoft.Data.Sqlite.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\SQLitePCLRaw.batteries_v2.dll">
+      <Link>Resources\Assembly\SQLitePCLRaw.batteries_v2.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\SQLitePCLRaw.core.dll">
+      <Link>Resources\Assembly\SQLitePCLRaw.core.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\SQLitePCLRaw.provider.e_sqlite3.dll">
+      <Link>Resources\Assembly\SQLitePCLRaw.provider.e_sqlite3.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\System.Memory.dll">
+      <Link>Resources\Assembly\System.Memory.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\System.Runtime.CompilerServices.Unsafe.dll">
+      <Link>Resources\Assembly\System.Runtime.CompilerServices.Unsafe.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\System.Runtime.dll">
+      <Link>Resources\Assembly\System.Runtime.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\System.ValueTuple.dll">
+      <Link>Resources\Assembly\System.ValueTuple.dll</Link>
+    </EmbeddedResource>
     <Content Include="..\Resources\Icon\Indabo.ico">
       <Link>Resources\Icon\Indabo.ico</Link>
     </Content>

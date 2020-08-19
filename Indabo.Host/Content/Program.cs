@@ -24,12 +24,23 @@
 
             try
             {
+                DatabaseInternal.Initalize(Program.config.DatabaseType, Program.config.DatabaseConnectionString);
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Error while initalizing the Database: ", ex);
+                return;
+            }
+
+            try
+            {
                 Program.webServer = new WebServer(Program.config.Port, Program.config.WebServerPublicAccess);
                 Program.webServer.Start();
             }
             catch(Exception ex)
             {
                 Logging.Error("Error while starting the WebServer: ", ex);
+                return;
             }
 
             try
@@ -40,6 +51,7 @@
             catch (Exception ex)
             {
                 Logging.Error("Error while starting the SQLReader: ", ex);
+                return;
             }            
         }
 
