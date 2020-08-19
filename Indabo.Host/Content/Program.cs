@@ -18,6 +18,7 @@
         public static void Start(string[] args)
         {
             Logging.Info($"Indabo started! - {Assembly.GetExecutingAssembly().FullName}");
+            Logging.Info($"Core Version: {Assembly.GetAssembly(typeof(Indabo.Core.Logging)).FullName}");
 
             Program.config = ConfigFile.Load<Config>("Indabo");
 
