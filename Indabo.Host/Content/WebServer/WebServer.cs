@@ -4,11 +4,9 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Net;
-    using System.Net.WebSockets;
     using System.Reflection;
     using System.Text;
     using System.Threading;
-    using System.Threading.Tasks;
     using Indabo.Core;
     using Newtonsoft.Json;
 
@@ -88,7 +86,7 @@
                     response.ContentType = "image/png";
 
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string resourceName = "Indabo.Host.Content.GUI.Frame.Icon.Indabo.png";
+                    string resourceName = "Indabo.Host.Content.GUI.Icon.Indabo.png";
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                     {
                         using (BinaryReader reader = new BinaryReader(stream))
@@ -158,7 +156,7 @@
                     }
 
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string resourceName = "Indabo.Host.Content.GUI.Frame" + request.Url.AbsolutePath.Replace('/', '.');
+                    string resourceName = "Indabo.Host.Content.GUI" + request.Url.AbsolutePath.Replace('/', '.');
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                     {
                         using (BinaryReader reader = new BinaryReader(stream))
@@ -173,7 +171,7 @@
                     response.ContentType = "application/javascript";
 
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string resourceName = "Indabo.Host.Content.GUI.Frame.Frame.js";
+                    string resourceName = "Indabo.Host.Content.GUI.Frame.js";
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                     {
                         using (BinaryReader reader = new BinaryReader(stream))
@@ -188,7 +186,7 @@
                     response.ContentType = "text/css";
 
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string resourceName = "Indabo.Host.Content.GUI.Frame.Frame.css";
+                    string resourceName = "Indabo.Host.Content.GUI.Frame.css";
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                     {
                         using (BinaryReader reader = new BinaryReader(stream))
@@ -203,7 +201,7 @@
                     response.ContentType = "text/html";
 
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string resourceName = "Indabo.Host.Content.GUI.Frame.Frame.html";
+                    string resourceName = "Indabo.Host.Content.GUI.Frame.html";
                     using (Stream stream = assembly.GetManifestResourceStream(resourceName))
                     {
                         using (StreamReader reader = new StreamReader(stream))
