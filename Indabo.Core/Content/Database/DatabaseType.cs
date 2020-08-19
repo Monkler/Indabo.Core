@@ -5,7 +5,7 @@
 
     [JsonConverter(typeof(StringEnumConverter))]
     public enum DatabaseType
-    {
+    {        
         SQLite = 0,
         MySQL = 1
     }

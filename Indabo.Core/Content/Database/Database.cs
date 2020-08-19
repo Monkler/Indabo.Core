@@ -3,6 +3,8 @@
     using System;
     using System.Data;
     using System.Data.Common;
+    using System.Threading;
+
     using Microsoft.Data.Sqlite;
 
     using MySqlConnector;
@@ -35,22 +37,17 @@
 
             this.databaseType = databaseType;
 
-            this.connection.StateChange += this.OnMySqlConnectionStateChange;
             this.connection.Open();
+        }
+
+        private void Database_InfoMessage(object sender, MySqlInfoMessageEventArgs args)
+        {
+            Logging.Warning("Database Error (MySQL):" + args.Errors);
         }
 
         ~Database()
         {
             this.connection.Close();
-        }
-
-        private void OnMySqlConnectionStateChange(object sender, StateChangeEventArgs e)
-        {
-            if (e.CurrentState == ConnectionState.Broken || e.CurrentState == ConnectionState.Closed)
-            {
-                Logging.Error($"Connection to Database {e.CurrentState}. Reconnecting...");
-                this.connection.Open();
-            }
         }
 
         /// <summary>
@@ -89,10 +86,10 @@
             return command;
         }
 
-        public Database Instance
+        public static Database Instance
         {
             get
-            { 
+            {
                 if (Database.instance == null)
                 {
                     Logging.Error("Database is not initalized yet!");

@@ -7,19 +7,19 @@
 
     public class Program
     {
-        public static void Main(string[] args)
+        static Program()
         {
             AssemblyResolver assemblyResolver = new AssemblyResolver(Assembly.GetExecutingAssembly());
             assemblyResolver.Activate();
+        }
 
-            new Action(() =>
-            {
-                Host.Program.Start(args);
+        public static void Main(string[] args)
+        {
+            Host.Program.Start(args);
 
-                while (Console.ReadKey().Key != ConsoleKey.Escape) { }
+            while (Console.ReadKey().Key != ConsoleKey.Escape) { }
 
-                Host.Program.Stop();
-            }).Invoke();
+            Host.Program.Stop();
         }
     }
 }

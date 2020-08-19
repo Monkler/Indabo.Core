@@ -109,6 +109,15 @@
     <EmbeddedResource Include="..\Resources\Assembly\System.ValueTuple.dll">
       <Link>Resources\Assembly\System.ValueTuple.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\System.Threading.Tasks.Extensions.dll">
+      <Link>Resources\Assembly\System.Threading.Tasks.Extensions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\System.Numerics.Vectors.dll">
+      <Link>Resources\Assembly\System.Numerics.Vectors.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\System.Buffers.dll">
+      <Link>Resources\Assembly\System.Buffers.dll</Link>
+    </EmbeddedResource>
     <Content Include="..\Resources\Icon\Indabo.ico">
       <Link>Resources\Icon\Indabo.ico</Link>
     </Content>

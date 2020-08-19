@@ -10,6 +10,14 @@
         public void Start()
         {
             WebSocketReader.Instance.Received += this.OnReceived;
+
+            var command = Database.Instance.ExecuteCommand("select * from mqtt_log");
+            var myReader = command.ExecuteReader();
+            while (myReader.Read())
+            {
+                string name = myReader.GetString(0);
+                Console.WriteLine($"Hello {name}!");
+            }
         }
 
         public void Stop()

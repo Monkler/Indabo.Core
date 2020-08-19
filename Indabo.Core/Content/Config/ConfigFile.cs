@@ -46,7 +46,7 @@
                 }
                 catch(Exception ex)
                 {
-                    Logging.Error("Could not load config file!", ex);
+                    throw new Exception("Could not load config file!", ex);
                 }
             }
 
@@ -86,7 +86,7 @@
             }
             catch(Exception ex)
             {
-                Logging.Error($"Could not save config file: {typeof(T).FullName} - '{path}'", ex);
+                throw new Exception($"Could not save config file: {typeof(T).FullName} - '{path}'", ex);
             }
         }
     }

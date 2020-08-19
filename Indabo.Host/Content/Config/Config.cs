@@ -15,7 +15,7 @@
         private DatabaseType databaseType = DatabaseType.SQLite;
 
         // SQLite: Data Source=hello.db
-        // mySQL: server={server};user id={userID};password={password};port=3306;database={database};SslMode=Preffered
+        // mySQL: server={server};user id={userID};password={password};port=3306;database={database};SslMode=Preferred
         private string databaseConnectionString = "Data Source=Indabo.db"; 
 
         public int Port { get => this.port; set => this.port = value; }

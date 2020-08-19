@@ -20,7 +20,15 @@
             Logging.Info($"Indabo started! - {Assembly.GetExecutingAssembly().FullName}");
             Logging.Info($"Core Version: {Assembly.GetAssembly(typeof(Indabo.Core.Logging)).FullName}");
 
-            Program.config = ConfigFile.Load<Config>("Indabo");
+            try
+            {
+                Program.config = ConfigFile.Load<Config>("Indabo");
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Error while loading config: ", ex);
+                return;
+            }
 
             try
             {
