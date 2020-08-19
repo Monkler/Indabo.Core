@@ -118,6 +118,9 @@
     <EmbeddedResource Include="..\Resources\Assembly\System.Buffers.dll">
       <Link>Resources\Assembly\System.Buffers.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\System.Runtime.InteropServices.RuntimeInformation.dll">
+      <Link>Resources\Assembly\System.Runtime.InteropServices.RuntimeInformation.dll</Link>
+    </EmbeddedResource>
     <Content Include="..\Resources\Icon\Indabo.ico">
       <Link>Resources\Icon\Indabo.ico</Link>
     </Content>
