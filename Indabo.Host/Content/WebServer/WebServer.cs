@@ -20,10 +20,18 @@
 
         private bool running;
 
-        public WebServer(int port)
+        public WebServer(int port, bool webServerPublicAccess = false)
         {
             this.listener = new HttpListener();
-            this.listener.Prefixes.Add($"http://localhost:{port}/");
+
+            if (webServerPublicAccess)
+            {
+                this.listener.Prefixes.Add($"http://*:{port}/");
+            }
+            else
+            {
+                this.listener.Prefixes.Add($"http://localhost:{port}/");
+            }
 
             Logging.Info($"Webserver initalized with Port '{port}'!");
         }

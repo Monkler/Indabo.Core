@@ -23,7 +23,7 @@
 
             try
             {
-                Program.webServer = new WebServer(Program.config.Port);
+                Program.webServer = new WebServer(Program.config.Port, Program.config.WebServerPublicAccess);
                 Program.webServer.Start();
             }
             catch(Exception ex)

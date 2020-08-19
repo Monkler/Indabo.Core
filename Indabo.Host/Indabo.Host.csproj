@@ -15,30 +15,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Content\GUI\Frame\Frame.css" />
-    <None Remove="Content\GUI\Frame\Frame.html" />
-    <None Remove="Content\GUI\Frame\Frame.js" />
-    <None Remove="Content\GUI\Frame\Icon\Connected.svg" />
-    <None Remove="Content\GUI\Frame\Icon\Disconnected.svg" />
-    <None Remove="Content\GUI\Frame\Icon\Feedback.svg" />
-    <None Remove="Content\GUI\Frame\Icon\Help.svg" />
-    <None Remove="Content\GUI\Frame\Icon\MenuSymbol.svg" />
-    <None Remove="Content\GUI\Frame\Icon\ScrollDown.svg" />
-    <None Remove="Content\GUI\Frame\Icon\ScrollUp.svg" />
+    <None Remove="Content\GUI\Icon\Connected.svg" />
+    <None Remove="Content\GUI\Icon\Disconnected.svg" />
+    <None Remove="Content\GUI\Icon\Feedback.svg" />
+    <None Remove="Content\GUI\Icon\Help.svg" />
+    <None Remove="Content\GUI\Icon\MenuSymbol.svg" />
+    <None Remove="Content\GUI\Icon\ScrollDown.svg" />
+    <None Remove="Content\GUI\Icon\ScrollUp.svg" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\Resources\Icon\Indabo.png" Link="Content\GUI\Frame\Icon\Indabo.png" />
-    <EmbeddedResource Include="Content\GUI\Frame\Frame.css" />
-    <EmbeddedResource Include="Content\GUI\Frame\Frame.html" />
-    <EmbeddedResource Include="Content\GUI\Frame\Frame.js" />
-    <EmbeddedResource Include="Content\GUI\Frame\Icon\Connected.svg" />
-    <EmbeddedResource Include="Content\GUI\Frame\Icon\Disconnected.svg" />
-    <EmbeddedResource Include="Content\GUI\Frame\Icon\Feedback.svg" />
-    <EmbeddedResource Include="Content\GUI\Frame\Icon\Help.svg" />
-    <EmbeddedResource Include="Content\GUI\Frame\Icon\MenuSymbol.svg" />
-    <EmbeddedResource Include="Content\GUI\Frame\Icon\ScrollDown.svg" />
-    <EmbeddedResource Include="Content\GUI\Frame\Icon\ScrollUp.svg" />
+    <EmbeddedResource Include="..\Resources\Icon\Indabo.png" Link="Content\GUI\Icon\Indabo.png" />
+    <EmbeddedResource Include="Content\GUI\Frame.css" />
+    <EmbeddedResource Include="Content\GUI\Frame.html" />
+    <EmbeddedResource Include="Content\GUI\Frame.js" />
+    <EmbeddedResource Include="Content\GUI\Icon\Connected.svg" />
+    <EmbeddedResource Include="Content\GUI\Icon\Disconnected.svg" />
+    <EmbeddedResource Include="Content\GUI\Icon\Feedback.svg" />
+    <EmbeddedResource Include="Content\GUI\Icon\Help.svg" />
+    <EmbeddedResource Include="Content\GUI\Icon\MenuSymbol.svg" />
+    <EmbeddedResource Include="Content\GUI\Icon\ScrollDown.svg" />
+    <EmbeddedResource Include="Content\GUI\Icon\ScrollUp.svg" />
   </ItemGroup>
 
   <ItemGroup>
