@@ -40,11 +40,6 @@
             this.connection.Open();
         }
 
-        private void Database_InfoMessage(object sender, MySqlInfoMessageEventArgs args)
-        {
-            Logging.Warning("Database Error (MySQL):" + args.Errors);
-        }
-
         ~Database()
         {
             this.connection.Close();
