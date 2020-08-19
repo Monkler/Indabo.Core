@@ -16,6 +16,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Content\GUI\Font\fonts\opensans-300-italic.woff" />
+    <None Remove="Content\GUI\Font\fonts\opensans-300.woff" />
+    <None Remove="Content\GUI\Font\fonts\opensans-400-italic.woff" />
+    <None Remove="Content\GUI\Font\fonts\opensans-400.woff" />
+    <None Remove="Content\GUI\Font\fonts\opensans-600-italic.woff" />
+    <None Remove="Content\GUI\Font\fonts\opensans-600.woff" />
+    <None Remove="Content\GUI\Font\fonts\opensans-700-italic.woff" />
+    <None Remove="Content\GUI\Font\fonts\opensans-700.woff" />
+    <None Remove="Content\GUI\Font\opensans.css" />
     <None Remove="Content\GUI\Icon\Connected.svg" />
     <None Remove="Content\GUI\Icon\Disconnected.svg" />
     <None Remove="Content\GUI\Icon\Feedback.svg" />
@@ -27,6 +36,15 @@
 
   <ItemGroup>
     <EmbeddedResource Include="..\Resources\Icon\Indabo.png" Link="Content\GUI\Icon\Indabo.png" />
+    <EmbeddedResource Include="Content\GUI\Font\fonts\opensans-300-italic.woff" />
+    <EmbeddedResource Include="Content\GUI\Font\fonts\opensans-300.woff" />
+    <EmbeddedResource Include="Content\GUI\Font\fonts\opensans-400-italic.woff" />
+    <EmbeddedResource Include="Content\GUI\Font\fonts\opensans-400.woff" />
+    <EmbeddedResource Include="Content\GUI\Font\fonts\opensans-600-italic.woff" />
+    <EmbeddedResource Include="Content\GUI\Font\fonts\opensans-600.woff" />
+    <EmbeddedResource Include="Content\GUI\Font\fonts\opensans-700-italic.woff" />
+    <EmbeddedResource Include="Content\GUI\Font\fonts\opensans-700.woff" />
+    <EmbeddedResource Include="Content\GUI\Font\opensans.css" />
     <EmbeddedResource Include="Content\GUI\Frame.css" />
     <EmbeddedResource Include="Content\GUI\Frame.html" />
     <EmbeddedResource Include="Content\GUI\Frame.js" />
