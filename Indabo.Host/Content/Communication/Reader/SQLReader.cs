@@ -8,10 +8,17 @@
     using Newtonsoft.Json;
 
     using Indabo.Core;
+    using System.Collections.Generic;
+    using System.Net.WebSockets;
 
     internal class SQLReader
     {
-        public SQLReader() {}
+        Dictionary<WebSocket, List<SQLReaderCommand>> storedReaders;
+
+        public SQLReader()
+        {
+            this.storedReaders = new Dictionary<WebSocket, List<SQLReaderCommand>>();
+        }
 
         public void Start()
         {
@@ -27,60 +34,127 @@
         {
             try
             {
-                // Folder /SQL durchsuchen ob vorhanden und die wildcards auflösen
-                // Dann einfach Command ausführen von DBManager und response zurückgeben
-                // Wildcards !?!
-                // Wie weiß sender welcher respnse zu welchen request gehört 
+                // Syntax: see SQLReaderCommand or id:int for follow up reading
+                // e.g. see SQLReaderCommand as JSON serialized
+                // e.g. 42
 
-                // evtl wirklich als json object
-                // string id - um zu wissen welcher response zu welchen req gehört
-                // bool isStoredQuery = true           bool isFilePath / isInlineQuery / isSideQuery / isRemoteQuery / isStoredQuery
-                // string query oder string query-file-name / query-file-path
-                // Dictionary<sring, string> parameters / wildcards // evtl auch nur list - noch mehr users porblem wenn er key zweimal macht // mache dann einfach query.Replace(dictonary.key, dicontary.value) was user daraus macht sein problem
-                // int? maxRows = null // wenn nicht null dann werden maximal soviel rows zurückgegeben ... dannach frägt client wieder mit id and und bekommt wieder maxRows geliefert
-
-                // in library dann // id wird intern abgehandelt einfach ein fortlaufende nummer (muss nich synchronisiert werden mit anderen clients)
-                // SQLReader.ExecuteRemoteQuery(query, Dictonary<string, string> wildcards...) : JsonObject[maxRows]
+                // Library:
+                // SQLReader.ExecuteQuery(query, Dictonary<string, string> wildcards...) : JsonObject[maxRows]
                 // SQLReader.ExecuteStoredQuery(path, Dictonary<string, string> wildcards...) : JsonObject[maxRows]
-                // wie kann man hier weiter lesen... wenn man nicht alle auf einmal lesen will
-                // SQLReader.ExecuteRemoteQuery(query, int maxRows, Dictonary<string, string> wildcards...) : QueryReader
+                // SQLReader.ExecuteQuery(query, int maxRows, Dictonary<string, string> wildcards...) : QueryReader
                 // SQLReader.ExecuteStoredQuery(path, int maxRows, Dictonary<string, string> wildcards...) : QueryReader
-                // -> QueryReader.GetNextResults() : JsonObject[maxRows] oder null wenn nichts mehr verfügbar
+                // myQueryReader.GetNextResults() : JsonObject[maxRows] oder null wenn nichts mehr verfügbar
 
-                // wenn client mit selber id oder unbekannter id oder schon fertig gelesener id anfrägt einfach "null" zurückliefern
-
-                Logging.Debug("SQLReader request: " + e.Message);
-
-                string query;
-
-                if (e.Message.StartsWith(":"))
+                int id;
+                if (int.TryParse(e.Message, out id))
                 {
-                    query = e.Message.Substring(1);
+                    // GetNextResults
+                    // Continue reading already opened reader
+
+                    SQLReaderCommand commandFound = null;
+                    foreach (SQLReaderCommand command in this.storedReaders[e.WebSocket])
+                    {
+                        if (command.Id == id)
+                        {
+                            commandFound = command;
+                            break;
+                        }
+                    }
+
+                    if (commandFound != null) 
+                    {
+                        Logging.Debug("SQLReader continue reading request with id: " + id);
+
+                        WebSocketHandler.SendTo(e.WebSocket, this.ReadRows(commandFound.DataReader, commandFound.MaxRows));
+                    }
+                    else 
+                    {
+                        Logging.Error("SQLReader could not find id to continue reading: " + id);
+                    }
+                    
                 }
                 else
                 {
-                    string absolutePath = Path.Combine(Config.ROOT_DIRECTORY, e.Message.Replace("/", "\\"));
-                    absolutePath = Uri.UnescapeDataString(absolutePath);
-                    if (File.Exists(absolutePath) == false)
+                    SQLReaderCommand command = JsonConvert.DeserializeObject<SQLReaderCommand>(e.Message);                    
+
+                    Logging.Debug("SQLReader request: " + command);
+
+                    string query;
+
+                    if (command.IsStoredQuery)
                     {
-                        Logging.Error($"Query-File not found: {e.Message}");
-                        return;
+                        string absolutePath = Path.Combine(Config.ROOT_DIRECTORY, command.Query.Replace("/", "\\"));
+                        absolutePath = Uri.UnescapeDataString(absolutePath);
+                        if (File.Exists(absolutePath) == false)
+                        {
+                            Logging.Error($"Query-File not found: {command.Query}");
+                            return;
+                        }
+
+                        query = File.ReadAllText(absolutePath);
+                    }
+                    else
+                    {
+                        query = command.Query;
                     }
 
-                    query = File.ReadAllText(absolutePath);
+                    foreach (KeyValuePair<string, string> wildcard in command.Wildcards)
+                    {
+                        query.Replace(wildcard.Key, wildcard.Value);
+                    }
+
+                    using (DbCommand dbCommand = Database.Instance.ExecuteCommand(query))
+                    {
+                        DbDataReader reader = dbCommand.ExecuteReader();
+                        command.DataReader = reader;
+
+                        if (command.MaxRows == null)
+                        {
+                            WebSocketHandler.SendTo(e.WebSocket, this.ReadRows(reader));
+                        }  
+                        else
+                        {
+                            if (this.storedReaders.ContainsKey(e.WebSocket) == false)
+                            {
+                                this.storedReaders.Add(e.WebSocket, new List<SQLReaderCommand>());
+                            }
+
+                            foreach (SQLReaderCommand otherCommand in this.storedReaders[e.WebSocket])
+                            {
+                                if (otherCommand.Id == command.Id)
+                                {
+                                    otherCommand.DataReader.Close();
+                                    this.storedReaders[e.WebSocket].Remove(otherCommand);
+                                    break;
+                                }
+                            }
+
+                            this.storedReaders[e.WebSocket].Add(command);
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Logging.Error($"Error during receiving SQLReader request: {e.Message}", ex);
+            }
+        }
 
-                DbCommand command = Database.Instance.ExecuteCommand(query);
-                DbDataReader reader = command.ExecuteReader();
+        private string ReadRows(DbDataReader reader, int? maxRows = null)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            StringWriter stringWriter = new StringWriter(stringBuilder);
 
-                StringBuilder stringBuilder = new StringBuilder();
-                StringWriter stringWriter = new StringWriter(stringBuilder);
+            bool isFinishedOrHasErrors = true;
 
+            try
+            {
                 using (JsonWriter jsonWriter = new JsonTextWriter(stringWriter))
                 {
                     jsonWriter.WriteStartArray();
 
-                    while (reader.Read())
+                    int lines = 0;
+                    while ((maxRows == null || lines < maxRows) && reader.Read())
                     {
                         jsonWriter.WriteStartObject();
 
@@ -93,17 +167,49 @@
                         }
 
                         jsonWriter.WriteEndObject();
+
+                        lines++;
+                    }
+
+                    if (lines >= maxRows)
+                    {
+                        isFinishedOrHasErrors = false;
                     }
 
                     jsonWriter.WriteEndArray();
                 }
-
-                WebSocketHandler.SendTo(e.WebSocket, stringWriter.ToString());
             }
-            catch (Exception ex)
+            finally
             {
-                Logging.Error($"Error during receiving SQLReader request: {e.Message}", ex);
+                if (isFinishedOrHasErrors)
+                {
+                    foreach (List<SQLReaderCommand> commands in this.storedReaders.Values)
+                    {
+                        //foreach (SQLReaderCommand command in commands)
+                        for (int i = 0; i < commands.Count; i++)
+                        {
+                            SQLReaderCommand command = commands[i];
+
+                            // Cleanup old readerss
+                            if ((DateTime.Now - command.Timestamp) > SQLReaderCommand.COMMAND_TIMEOUT)
+                            {
+                                command.DataReader.Close();
+                                commands.Remove(command);
+                                i--;
+                            }
+
+                            if (command.DataReader == reader)
+                            {
+                                command.DataReader.Close();
+                                commands.Remove(command);
+                                i--;
+                            }
+                        }
+                    }
+                }
             }
+
+            return stringWriter.ToString();
         }
     }
 }
