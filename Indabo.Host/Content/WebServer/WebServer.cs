@@ -121,7 +121,7 @@
                         response.ContentType = "text/html";
                     }
 
-                    string absolutePanelPath = Path.Combine(Config.ROOT_DIRECTORY, request.Url.AbsolutePath.TrimStart('/').Replace("/", "\\"));
+                    string absolutePanelPath = Path.Combine(Config.ROOT_DIRECTORY, request.Url.AbsolutePath.Replace("/", "\\").TrimStart('\\'));
                     absolutePanelPath = Uri.UnescapeDataString(absolutePanelPath);
                     if (File.Exists(absolutePanelPath))
                     {

@@ -10,9 +10,12 @@
     using Indabo.Core;
     using System.Collections.Generic;
     using System.Net.WebSockets;
+    using System.Linq;
 
     internal class SQLReader
     {
+        private const string STORED_QUERY_FOLDER = "SQL";
+
         Dictionary<WebSocket, List<SQLReaderCommand>> storedReaders;
 
         public SQLReader()
@@ -52,30 +55,51 @@
                     // Continue reading already opened reader
 
                     SQLReaderCommand commandFound = null;
-                    foreach (SQLReaderCommand command in this.storedReaders[e.WebSocket])
+                    if (this.storedReaders.ContainsKey(e.WebSocket))
                     {
-                        if (command.Id == id)
+                        foreach (SQLReaderCommand command in this.storedReaders[e.WebSocket])
                         {
-                            commandFound = command;
-                            break;
+                            if (command.Id == id)
+                            {
+                                commandFound = command;
+                                break;
+                            }
                         }
                     }
 
                     if (commandFound != null) 
                     {
-                        Logging.Debug("SQLReader continue reading request with id: " + id);
+                        Logging.Debug($"SQLReader continue reading request with id: {id} ({commandFound.TransferredRowCount} / {commandFound.BufferedData.Count})");
 
-                        WebSocketHandler.SendTo(e.WebSocket, this.ReadRows(commandFound.DataReader, commandFound.MaxRows));
+                        WebSocketHandler.SendTo(e.WebSocket, this.ReadRows(commandFound));
+
+                        if (commandFound.TransferredRowCount >= commandFound.BufferedData.Count)
+                        {
+                            commandFound.TransferredRowCount = 0;
+                            commandFound.BufferedData.Clear();
+                        }
                     }
                     else 
-                    {
+                    {                        
                         Logging.Error("SQLReader could not find id to continue reading: " + id);
-                    }
-                    
+                    }                    
                 }
                 else
                 {
-                    SQLReaderCommand command = JsonConvert.DeserializeObject<SQLReaderCommand>(e.Message);                    
+                    SQLReaderCommand command;
+                    try
+                    {
+                        using (StringReader stream = new StringReader(e.Message))
+                        {
+                            JsonSerializer serializer = new JsonSerializer();
+                            command = (SQLReaderCommand)serializer.Deserialize(stream, typeof(SQLReaderCommand));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logging.Error("SQLReader could not parse command: " + e.Message, ex);
+                        return;
+                    }
 
                     Logging.Debug("SQLReader request: " + command);
 
@@ -83,7 +107,7 @@
 
                     if (command.IsStoredQuery)
                     {
-                        string absolutePath = Path.Combine(Config.ROOT_DIRECTORY, command.Query.Replace("/", "\\"));
+                        string absolutePath = Path.Combine(Config.ROOT_DIRECTORY, SQLReader.STORED_QUERY_FOLDER, command.Query.Replace("/", "\\").TrimStart('\\'));
                         absolutePath = Uri.UnescapeDataString(absolutePath);
                         if (File.Exists(absolutePath) == false)
                         {
@@ -98,41 +122,70 @@
                         query = command.Query;
                     }
 
-                    foreach (KeyValuePair<string, string> wildcard in command.Wildcards)
+                    if (command.Wildcards != null)
                     {
-                        query.Replace(wildcard.Key, wildcard.Value);
+                        foreach (KeyValuePair<string, string> wildcard in command.Wildcards)
+                        {
+                            query = query.Replace(wildcard.Key, wildcard.Value);
+                        }
                     }
 
                     using (DbCommand dbCommand = Database.Instance.ExecuteCommand(query))
                     {
-                        DbDataReader reader = dbCommand.ExecuteReader();
-                        command.DataReader = reader;
-
-                        if (command.MaxRows == null)
+                        lock (Database.Instance.LOCK_OBJECT)
                         {
-                            WebSocketHandler.SendTo(e.WebSocket, this.ReadRows(reader));
-                        }  
-                        else
-                        {
-                            if (this.storedReaders.ContainsKey(e.WebSocket) == false)
+                            using (DbDataReader reader = dbCommand.ExecuteReader())
                             {
-                                this.storedReaders.Add(e.WebSocket, new List<SQLReaderCommand>());
-                            }
-
-                            foreach (SQLReaderCommand otherCommand in this.storedReaders[e.WebSocket])
-                            {
-                                if (otherCommand.Id == command.Id)
+                                while (reader.Read())
                                 {
-                                    otherCommand.DataReader.Close();
-                                    this.storedReaders[e.WebSocket].Remove(otherCommand);
-                                    break;
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    StringWriter stringWriter = new StringWriter(stringBuilder);
+                                    using (JsonWriter jsonWriter = new JsonTextWriter(stringWriter))
+                                    {
+                                        jsonWriter.WriteStartObject();
+
+                                        int fields = reader.FieldCount;
+
+                                        for (int i = 0; i < fields; i++)
+                                        {
+                                            jsonWriter.WritePropertyName(reader.GetName(i));
+                                            jsonWriter.WriteValue(reader[i]);
+                                        }
+
+                                        jsonWriter.WriteEndObject();
+
+                                        command.BufferedData.Add(stringWriter.ToString());
+                                    }
+                                }
+
+                                if (command.MaxRows == null)
+                                {
+                                    WebSocketHandler.SendTo(e.WebSocket, command.Id + ":" + this.ReadRows(command));
+                                }
+                                else
+                                {
+                                    if (this.storedReaders.ContainsKey(e.WebSocket) == false)
+                                    {
+                                        this.storedReaders.Add(e.WebSocket, new List<SQLReaderCommand>());
+                                    }
+
+                                    foreach (SQLReaderCommand otherCommand in this.storedReaders[e.WebSocket])
+                                    {
+                                        if (otherCommand.Id == command.Id)
+                                        {
+                                            this.storedReaders[e.WebSocket].Remove(otherCommand);
+                                            break;
+                                        }
+                                    }
+
+                                    this.storedReaders[e.WebSocket].Add(command);
                                 }
                             }
-
-                            this.storedReaders[e.WebSocket].Add(command);
                         }
                     }
                 }
+
+                this.CleanUp();
             }
             catch (Exception ex)
             {
@@ -140,76 +193,56 @@
             }
         }
 
-        private string ReadRows(DbDataReader reader, int? maxRows = null)
+        private string ReadRows(SQLReaderCommand command)
         {
             StringBuilder stringBuilder = new StringBuilder();
             StringWriter stringWriter = new StringWriter(stringBuilder);
-
-            bool isFinishedOrHasErrors = true;
-
-            try
+            using (JsonWriter jsonWriter = new JsonTextWriter(stringWriter))
             {
-                using (JsonWriter jsonWriter = new JsonTextWriter(stringWriter))
+                jsonWriter.WriteStartArray();
+
+                if (command.MaxRows == null)
                 {
-                    jsonWriter.WriteStartArray();
-
-                    int lines = 0;
-                    while ((maxRows == null || lines < maxRows) && reader.Read())
-                    {
-                        jsonWriter.WriteStartObject();
-
-                        int fields = reader.FieldCount;
-
-                        for (int i = 0; i < fields; i++)
-                        {
-                            jsonWriter.WritePropertyName(reader.GetName(i));
-                            jsonWriter.WriteValue(reader[i]);
-                        }
-
-                        jsonWriter.WriteEndObject();
-
-                        lines++;
-                    }
-
-                    if (lines >= maxRows)
-                    {
-                        isFinishedOrHasErrors = false;
-                    }
-
-                    jsonWriter.WriteEndArray();
+                    command.MaxRows = command.BufferedData.Count;
                 }
-            }
-            finally
-            {
-                if (isFinishedOrHasErrors)
+
+                for (int i = command.TransferredRowCount; i < command.TransferredRowCount + command.MaxRows && i < command.BufferedData.Count; i++)
                 {
-                    foreach (List<SQLReaderCommand> commands in this.storedReaders.Values)
+                    jsonWriter.WriteRaw(command.BufferedData[i]);                    
+                }
+
+                command.TransferredRowCount += command.MaxRows.Value;
+
+                jsonWriter.WriteEndArray();
+
+                return stringWriter.ToString();
+            }            
+        }
+
+        private void CleanUp()
+        {
+            //foreach (List<SQLReaderCommand> commands in this.storedReaders.Values)
+            for (int j = 0; j < this.storedReaders.Count; j++)
+            {
+                KeyValuePair<WebSocket, List<SQLReaderCommand>> commands = this.storedReaders.ElementAt(j);
+
+                for (int i = 0; i < commands.Value.Count; i++)
+                {
+                    SQLReaderCommand command = commands.Value[i];
+
+                    if ((DateTime.Now - command.Timestamp) > SQLReaderCommand.COMMAND_TIMEOUT)
                     {
-                        //foreach (SQLReaderCommand command in commands)
-                        for (int i = 0; i < commands.Count; i++)
-                        {
-                            SQLReaderCommand command = commands[i];
-
-                            // Cleanup old readerss
-                            if ((DateTime.Now - command.Timestamp) > SQLReaderCommand.COMMAND_TIMEOUT)
-                            {
-                                command.DataReader.Close();
-                                commands.Remove(command);
-                                i--;
-                            }
-
-                            if (command.DataReader == reader)
-                            {
-                                command.DataReader.Close();
-                                commands.Remove(command);
-                                i--;
-                            }
-                        }
+                        commands.Value.Remove(command);
+                        i--;
                     }
                 }
-            }
 
-            return stringWriter.ToString();
+                if (commands.Value.Count == 0)
+                {
+                    this.storedReaders.Remove(commands.Key);
+                    j--;
+                }
+            }
         }
     }
 }

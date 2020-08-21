@@ -11,6 +11,9 @@
 
     public class WebSocketHandler
     {
+        private const int TRANSMIT_BUFFER_SIZE = 1024;
+        private const int RECEIVE_BUFFER_SIZE = 1024;
+
         internal event EventHandler<WebSocketConnectionEventArgs> Opened;
         internal event EventHandler<WebSocketReceivedEventArgs> Received;
         internal event EventHandler<WebSocketConnectionEventArgs> Closed;
@@ -58,10 +61,12 @@
 
                 string message = string.Empty;
 
-                byte[] receiveBuffer = new byte[1024];
+                byte[] receiveBuffer = new byte[RECEIVE_BUFFER_SIZE];
+                int messageLength = 0;
                 while (webSocketConnectionEventArgs.WebSocket.State == WebSocketState.Open)
                 {
                     WebSocketReceiveResult receiveResult = await webSocketConnectionEventArgs.WebSocket.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), CancellationToken.None);
+                    messageLength += receiveResult.Count;
 
                     if (receiveResult.MessageType == WebSocketMessageType.Close)
                     {
@@ -73,12 +78,13 @@
                     }
                     else
                     {
-                        message += Encoding.UTF8.GetString(receiveBuffer);
+                        message += Encoding.UTF8.GetString(receiveBuffer, 0, messageLength);
 
                         if (receiveResult.EndOfMessage)
                         {
-                            this.Received?.Invoke(this, new WebSocketReceivedEventArgs(webSocketConnectionEventArgs.WebSocket, webSocketConnectionEventArgs.Url, message.Trim('\0')));
+                            this.Received?.Invoke(this, new WebSocketReceivedEventArgs(webSocketConnectionEventArgs.WebSocket, webSocketConnectionEventArgs.Url, message));
                             message = string.Empty;
+                            messageLength = 0;
                         }
                     }
                 }
@@ -129,15 +135,18 @@
                     length = messageBuffer.Length;
                 }
 
-                for (int i = 0; i < messageBuffer.Length; i += 1024)
+                lock (webSocket)
                 {
-                    int currentLEngth = 1024;
-                    if (i + currentLEngth > length)
+                    for (int i = 0; i < messageBuffer.Length; i += TRANSMIT_BUFFER_SIZE)
                     {
-                        currentLEngth = messageBuffer.Length - i;
-                    }
+                        int currentLEngth = TRANSMIT_BUFFER_SIZE;
+                        if (i + currentLEngth > length)
+                        {
+                            currentLEngth = messageBuffer.Length - i;
+                        }
 
-                    webSocket.SendAsync(new ArraySegment<byte>(messageBuffer, i, currentLEngth), WebSocketMessageType.Text, true, CancellationToken.None);
+                        webSocket.SendAsync(new ArraySegment<byte>(messageBuffer, i, currentLEngth), WebSocketMessageType.Text, true, CancellationToken.None);
+                    }
                 }
             }
             catch (Exception ex)

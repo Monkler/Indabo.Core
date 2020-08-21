@@ -138,7 +138,9 @@
                 str += $"\n{this.attachedObject.ToString()}";
 
             if (this.exception != null)
+            {
                 str += $"\n{this.exception.ToString()}";
+            }
 
             return str;
         }

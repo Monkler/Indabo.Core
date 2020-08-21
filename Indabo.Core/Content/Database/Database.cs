@@ -16,6 +16,8 @@
 
         protected static Database instance;
 
+        public readonly object LOCK_OBJECT = new object();
+
         private DatabaseType databaseType;
         private DbConnection connection;
 

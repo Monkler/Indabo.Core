@@ -14,41 +14,38 @@
         private int id;
         private bool isStoredQuery;
         private string query;
-        Dictionary<string, string> wildcards;
+
+        Dictionary<string, string> wildcards = null;
         int? maxRows = null;
 
-        private DbDataReader dataReader;
+        private List<string> bufferedData;
+        private int transferredRowCount = 0;
 
-        public DateTime Timestamp { get => this.timestamp; set => this.timestamp = value; }
+        public DateTime Timestamp { get => this.timestamp; }
 
-        public int Id { get => this.id; }
+        public int Id { get => this.id; set => this.id = value; }
 
-        public bool IsStoredQuery { get => this.isStoredQuery; }
+        public bool IsStoredQuery { get => this.isStoredQuery; set => this.isStoredQuery = value; }
 
-        public string Query { get => this.query; }
+        public string Query { get => this.query; set => this.query = value; }
 
-        public Dictionary<string, string> Wildcards { get => this.wildcards; }
+        public Dictionary<string, string> Wildcards { get => this.wildcards; set => this.wildcards = value; }
 
-        public int? MaxRows { get => this.maxRows; }
+        public int? MaxRows { get => this.maxRows; set => this.maxRows = value; }
 
-        public DbDataReader DataReader { get => this.dataReader; set => this.dataReader = value; }
+        public List<string> BufferedData { get => this.bufferedData; set => this.bufferedData = value; }
+
+        public int TransferredRowCount { get => this.transferredRowCount; set => this.transferredRowCount = value; }
 
         public SQLReaderCommand()
         {
             this.timestamp = DateTime.Now;
-        }
-
-        ~SQLReaderCommand()
-        {
-            if (this.dataReader != null && this.dataReader.IsClosed == false)
-            {
-                this.dataReader.Close();
-            }
+            this.bufferedData = new List<string>();
         }
 
         public override string ToString()
         {
-            return $"{this.Id}: {this.Query}";
+            return $"{this.id}: {this.query}";
         }
     }
 }
