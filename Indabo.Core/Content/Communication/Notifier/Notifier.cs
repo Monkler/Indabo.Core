@@ -48,6 +48,11 @@ namespace Indabo.Core
             // Unsubscribe: ?<NotiferName>/Key1/Key2
             // e.g. !MyNotifier/MyTopic/MySubTopic
 
+            // Library:
+            // let myFunction = (key, value) => {}
+            // Notifier.Subscribe("MyNotifier/Key1/Key2", myFunction)
+            // Notifier.UnSubscribe(myFunction)
+
             try
             {
                 if (e.Message.StartsWith("!" + this.notifierName + "/"))

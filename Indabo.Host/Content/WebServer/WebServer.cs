@@ -12,8 +12,6 @@
 
     internal class WebServer
     {
-        private static readonly string ROOT_DIRECTORY = new FileInfo(new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath).Directory.FullName;
-
         private HttpListener listener;
 
         private bool running;
@@ -123,7 +121,7 @@
                         response.ContentType = "text/html";
                     }
 
-                    string absolutePanelPath = Path.Combine(ROOT_DIRECTORY, request.Url.AbsolutePath.TrimStart('/').Replace("/", "\\"));
+                    string absolutePanelPath = Path.Combine(Config.ROOT_DIRECTORY, request.Url.AbsolutePath.TrimStart('/').Replace("/", "\\"));
                     absolutePanelPath = Uri.UnescapeDataString(absolutePanelPath);
                     if (File.Exists(absolutePanelPath))
                     {
@@ -159,8 +157,8 @@
                         {
                             string frame = reader.ReadToEnd();
 
-                            string libraries = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(ROOT_DIRECTORY, DynamicJavascriptLoader.LIBRARY_FOLDER);
-                            string widgets = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(ROOT_DIRECTORY, DynamicJavascriptLoader.WIDGET_FOLDER);
+                            string libraries = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Config.ROOT_DIRECTORY, DynamicJavascriptLoader.LIBRARY_FOLDER);
+                            string widgets = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Config.ROOT_DIRECTORY, DynamicJavascriptLoader.WIDGET_FOLDER);
 
                             frame = frame.Replace("%Library%", libraries);
                             frame = frame.Replace("%Widget%", widgets);

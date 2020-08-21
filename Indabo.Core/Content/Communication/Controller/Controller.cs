@@ -27,6 +27,11 @@
             // Syntax: <ControllerName>/Key1/Key2=Value
             // e.g. MyController/MyTopic/MySubTopic=42
 
+            // Library:
+            // let isHandledCallback = (key, value) => {}
+            // Controller.send("MyNotifier/Key1/Key2", value)
+            // Controller.send("MyNotifier/Key1/Key2", value, isHandledCallback)
+
             try
             {
                 string key = e.Message.Split('=')[0].Trim(' ');

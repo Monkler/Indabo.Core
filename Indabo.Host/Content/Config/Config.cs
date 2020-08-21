@@ -1,12 +1,16 @@
 ﻿namespace Indabo.Host
 {
     using System;
+    using System.IO;
+    using System.Reflection;
 
     using Indabo.Core;
 
     [Serializable]
     internal class Config
     {
+        public static readonly string ROOT_DIRECTORY = new FileInfo(new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath).Directory.FullName;
+
         private const int DEFAULT_PORT = 48623;
 
         private int port = DEFAULT_PORT;
@@ -16,7 +20,7 @@
 
         // SQLite: Data Source=hello.db
         // mySQL: server={server};user id={userID};password={password};port=3306;database={database};SslMode=Preferred
-        private string databaseConnectionString = "Data Source=Indabo.db"; 
+        private string databaseConnectionString = "Data Source=Indabo.db";
 
         public int Port { get => this.port; set => this.port = value; }
 
