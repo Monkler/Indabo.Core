@@ -11,6 +11,7 @@
     using System.Collections.Generic;
     using System.Net.WebSockets;
     using System.Linq;
+    using System.Data;
 
     internal class SQLReader
     {
@@ -67,7 +68,7 @@
                         }
                     }
 
-                    if (commandFound != null) 
+                    if (commandFound != null)
                     {
                         Logging.Debug($"SQLReader continue reading request with id: {id} ({commandFound.TransferredRowCount} / {commandFound.BufferedData.Count})");
 
@@ -79,10 +80,10 @@
                             commandFound.BufferedData.Clear();
                         }
                     }
-                    else 
-                    {                        
+                    else
+                    {
                         Logging.Error("SQLReader could not find id to continue reading: " + id);
-                    }                    
+                    }
                 }
                 else
                 {
@@ -130,58 +131,49 @@
                         }
                     }
 
-                    using (DbCommand dbCommand = Database.Instance.ExecuteCommand(query))
+                    Database.Instance.ExecuteReader(query, (DatabaseReaderCallback data) =>
                     {
-                        lock (Database.Instance.LOCK_OBJECT)
+                        StringBuilder stringBuilder = new StringBuilder();
+                        StringWriter stringWriter = new StringWriter(stringBuilder);
+                        using (JsonWriter jsonWriter = new JsonTextWriter(stringWriter))
                         {
-                            using (DbDataReader reader = dbCommand.ExecuteReader())
+                            jsonWriter.WriteStartObject();
+
+                            int fields = data.Records.FieldCount;
+
+                            for (int i = 0; i < fields; i++)
                             {
-                                while (reader.Read())
-                                {
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    StringWriter stringWriter = new StringWriter(stringBuilder);
-                                    using (JsonWriter jsonWriter = new JsonTextWriter(stringWriter))
-                                    {
-                                        jsonWriter.WriteStartObject();
+                                jsonWriter.WritePropertyName(data.Records.GetName(i));
+                                jsonWriter.WriteValue(data.Records[i]);
+                            }
 
-                                        int fields = reader.FieldCount;
+                            jsonWriter.WriteEndObject();
 
-                                        for (int i = 0; i < fields; i++)
-                                        {
-                                            jsonWriter.WritePropertyName(reader.GetName(i));
-                                            jsonWriter.WriteValue(reader[i]);
-                                        }
+                            command.BufferedData.Add(stringWriter.ToString());
+                        }
+                    });
 
-                                        jsonWriter.WriteEndObject();
+                    if (command.MaxRows == null)
+                    {
+                        WebSocketHandler.SendTo(e.WebSocket, command.Id + ":" + this.ReadRows(command));
+                    }
+                    else
+                    {
+                        if (this.storedReaders.ContainsKey(e.WebSocket) == false)
+                        {
+                            this.storedReaders.Add(e.WebSocket, new List<SQLReaderCommand>());
+                        }
 
-                                        command.BufferedData.Add(stringWriter.ToString());
-                                    }
-                                }
-
-                                if (command.MaxRows == null)
-                                {
-                                    WebSocketHandler.SendTo(e.WebSocket, command.Id + ":" + this.ReadRows(command));
-                                }
-                                else
-                                {
-                                    if (this.storedReaders.ContainsKey(e.WebSocket) == false)
-                                    {
-                                        this.storedReaders.Add(e.WebSocket, new List<SQLReaderCommand>());
-                                    }
-
-                                    foreach (SQLReaderCommand otherCommand in this.storedReaders[e.WebSocket])
-                                    {
-                                        if (otherCommand.Id == command.Id)
-                                        {
-                                            this.storedReaders[e.WebSocket].Remove(otherCommand);
-                                            break;
-                                        }
-                                    }
-
-                                    this.storedReaders[e.WebSocket].Add(command);
-                                }
+                        foreach (SQLReaderCommand otherCommand in this.storedReaders[e.WebSocket])
+                        {
+                            if (otherCommand.Id == command.Id)
+                            {
+                                this.storedReaders[e.WebSocket].Remove(otherCommand);
+                                break;
                             }
                         }
+
+                        this.storedReaders[e.WebSocket].Add(command);
                     }
                 }
 
@@ -208,7 +200,7 @@
 
                 for (int i = command.TransferredRowCount; i < command.TransferredRowCount + command.MaxRows && i < command.BufferedData.Count; i++)
                 {
-                    jsonWriter.WriteRaw(command.BufferedData[i]);                    
+                    jsonWriter.WriteRaw(command.BufferedData[i]);
                 }
 
                 command.TransferredRowCount += command.MaxRows.Value;
@@ -216,7 +208,7 @@
                 jsonWriter.WriteEndArray();
 
                 return stringWriter.ToString();
-            }            
+            }
         }
 
         private void CleanUp()

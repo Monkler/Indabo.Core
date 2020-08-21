@@ -63,7 +63,7 @@
         /// }
         /// </example>
         /// <returns>The <see cref="MySqlCommand"/> or <see cref="SqliteCommand"/> depending on the <see cref="DatabaseType"/></returns>
-        public DbCommand ExecuteCommand(string sql)
+        private DbCommand ExecuteCommand(string sql)
         {
             DbCommand command;
             if (this.databaseType == DatabaseType.MySQL)
@@ -81,6 +81,25 @@
             }
 
             return command;
+        }
+
+        public void ExecuteReader(string query, Action<DatabaseReaderCallback> callback)
+        {
+            using (DbCommand dbCommand = Database.Instance.ExecuteCommand(query))
+            {
+                lock (Database.Instance.LOCK_OBJECT)
+                {
+                    using (DbDataReader reader = dbCommand.ExecuteReader())
+                    {
+                        DatabaseReaderCallback callbackData = new DatabaseReaderCallback(reader);
+
+                        while (reader.Read() && callbackData.IsRequestComplete == false)
+                        {
+                            callback(callbackData); 
+                        }
+                    }
+                }
+            }
         }
 
         public static Database Instance
