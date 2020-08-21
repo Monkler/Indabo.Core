@@ -67,7 +67,7 @@ namespace Indabo.Core
 
                         if (this.retainBuffer.ContainsKey(key))
                         {
-                            this.Notify(key, this.retainBuffer[key], true);
+                            this.Notify(key, this.retainBuffer[key], true, e.WebSocket);
                         }
                     }
                 }
@@ -92,19 +92,27 @@ namespace Indabo.Core
             }
         }
 
-        public void Notify(string key, string value, bool retain = false)
+        public void Notify(string key, string value, bool retain = false, WebSocket sendToWebSocket = null)
         {
             try
             {
                 if (this.subscriptions.ContainsKey(key))
                 {
-                    foreach (WebSocket webSocket in this.subscriptions[key])
-                    {
-                        string message = this.notifierName + "/" + key + "=" + value;
-                        WebSocketHandler.SendTo(webSocket, message);
+                    string message = this.notifierName + "/" + key + "=" + value;
 
-                        Logging.Debug("Notify: " + message);
+                    if (sendToWebSocket == null)
+                    {
+                        foreach (WebSocket webSocket in this.subscriptions[key])
+                        {                            
+                            WebSocketHandler.SendTo(webSocket, message);
+                        }
                     }
+                    else
+                    {
+                        WebSocketHandler.SendTo(sendToWebSocket, message);
+                    }
+
+                    Logging.Debug("Notify: " + message);
                 }
 
                 if (retain == true)
