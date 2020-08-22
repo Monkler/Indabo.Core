@@ -3,6 +3,8 @@
     using System;
     using System.Threading;
     using System.IO;
+    using System.Diagnostics;
+    using System.Reflection;
 
     using Jint;
     using Jint.Constraints;
@@ -20,7 +22,13 @@
 
         private Thread executionThread;
 
-        CancellationConstraint cancellationConstraint;
+        private CancellationConstraint cancellationConstraint;
+
+        private DateTime? startTime = null;
+
+        public bool IsRunnning { get => this.executionThread.IsAlive; }
+
+        public DateTime? StartTime { get => this.startTime; set => this.startTime = value; }
 
         public Plugin(string filePath)
         {
@@ -38,11 +46,6 @@
                 options.AllowClr(typeof(Logging).Assembly);
                 options.Constraint(this.cancellationConstraint);
             });
-
-            // TODO also add list<plugins> von pluginmanager aber als readonly
-            // TODO test acces to Database
-            // TODO test access to Controller
-            // TODO test 
         }
 
         public void Start()
@@ -56,6 +59,7 @@
             {
                 try
                 {
+                    this.startTime = DateTime.Now;
 
                     this.engine.Execute(File.ReadAllText(this.filePath));
                     if (this.engine.GetValue("Start").Type == Types.Object)
@@ -85,7 +89,7 @@
                     if (this.engine.GetValue("Stop").Type == Types.Object)
                     {
                         this.engine.Invoke("Stop");
-                    }
+                    }                    
                 }
                 catch (StatementsCountOverflowException)
                 {
@@ -95,6 +99,8 @@
                 {
                     Logging.Error($"Fatal error in Plugin while stopping: '{this.filePath}'", ex);
                 }
+
+                this.startTime = null;
             });
 
             stopThread.Start();
@@ -114,7 +120,17 @@
 
         public void Profile()
         {
-            // TODO - return CPU auslastung
+            throw new NotImplementedException();
+        }
+
+        public TimeSpan? CalculateRuntime()
+        {
+            if (this.startTime != null)
+            {
+                return DateTime.Now - this.startTime;
+            }
+
+            return null;
         }
     }
 }

@@ -68,10 +68,6 @@
             {
                 Program.pluginManager = new PluginManager();
                 Program.pluginManager.Start();
-
-                System.Threading.Thread.Sleep(4000);
-
-                Program.pluginManager.Stop();
             }
             catch (Exception ex)
             {
