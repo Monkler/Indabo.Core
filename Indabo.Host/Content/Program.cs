@@ -13,6 +13,8 @@
 
         private static SQLReader sqlReader;
 
+        private static PluginManager pluginManager;
+
         internal static Config Config { get => config; set => config = value; }
 
         public static void Start(string[] args)
@@ -60,18 +62,33 @@
             {
                 Logging.Error("Error while starting the SQLReader: ", ex);
                 return;
-            }            
+            }
+
+            try
+            {
+                Program.pluginManager = new PluginManager();
+                Program.pluginManager.Start();
+
+                System.Threading.Thread.Sleep(4000);
+
+                Program.pluginManager.Stop();
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Error while starting the PluginManager: ", ex);
+                return;
+            }
         }
 
         public static void Stop()
         {
             try
             {
-                Program.webServer.Stop();
+                Program.pluginManager.Stop();
             }
             catch (Exception ex)
             {
-                Logging.Error("Error while stopping the WebServer: ", ex);
+                Logging.Error("Error while stopping the PluginManager: ", ex);
             }
 
             try
@@ -81,6 +98,15 @@
             catch (Exception ex)
             {
                 Logging.Error("Error while stopping the SQLReader: ", ex);
+            }
+
+            try
+            {
+                Program.webServer.Stop();
+            }
+            catch (Exception ex)
+            {
+                Logging.Error("Error while stopping the WebServer: ", ex);
             }
 
             Logging.Info($"Indabo stopped!");

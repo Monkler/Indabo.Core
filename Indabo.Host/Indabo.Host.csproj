@@ -32,6 +32,8 @@
     <None Remove="Content\GUI\Icon\MenuSymbol.svg" />
     <None Remove="Content\GUI\Icon\ScrollDown.svg" />
     <None Remove="Content\GUI\Icon\ScrollUp.svg" />
+    <None Remove="Jint.dll" />
+    <None Remove="Jint.pdb" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,7 +61,6 @@
 
   <ItemGroup>
     <Folder Include="Content\UserManager\" />
-    <Folder Include="Content\PluginManager\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,6 +69,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Indabo.Core\Indabo.Core.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="..\Resources\Assembly\Esprima.dll">
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="..\Resources\Assembly\Jint.dll">
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
 </Project>

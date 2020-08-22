@@ -121,6 +121,12 @@
     <EmbeddedResource Include="..\Resources\Assembly\System.Runtime.InteropServices.RuntimeInformation.dll">
       <Link>Resources\Assembly\System.Runtime.InteropServices.RuntimeInformation.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\Jint.dll">
+      <Link>Resources\Assembly\Jint.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\Esprima.dll">
+      <Link>Resources\Assembly\Esprima.dll</Link>
+    </EmbeddedResource>
     <Content Include="..\Resources\Icon\Indabo.ico">
       <Link>Resources\Icon\Indabo.ico</Link>
     </Content>
