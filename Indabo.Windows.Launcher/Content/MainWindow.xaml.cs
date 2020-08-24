@@ -5,6 +5,8 @@
 
     using CefSharp.Wpf;
 
+    using Indabo.Shared;
+
     public partial class MainWindow : Window
     {
         public string WebTitle { get; set; }

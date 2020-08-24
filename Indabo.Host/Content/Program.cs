@@ -15,7 +15,7 @@
 
         private static PluginManager pluginManager;
 
-        internal static Config Config { get => config; set => config = value; }
+        public static Config Config { get => config; set => config = value; }
 
         public static void Start(string[] args)
         {

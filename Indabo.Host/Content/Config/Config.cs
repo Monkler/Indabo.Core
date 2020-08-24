@@ -7,7 +7,7 @@
     using Indabo.Core;
 
     [Serializable]
-    internal class Config
+    public class Config
     {
         public static readonly string ROOT_DIRECTORY = new FileInfo(new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath).Directory.FullName;
 
