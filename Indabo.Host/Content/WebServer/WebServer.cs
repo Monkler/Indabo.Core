@@ -38,13 +38,13 @@
 
             this.running = true;
 
-            new Thread(() =>
+            new Thread(async () =>
             {
                 while (this.running)
                 {
                     try
                     {
-                        HttpListenerContext context = this.listener.GetContext();
+                        HttpListenerContext context = await this.listener.GetContextAsync();
 
                         Logging.Info($"New request: {context.Request.Url} ({ context.Request.UserHostName})");
 
