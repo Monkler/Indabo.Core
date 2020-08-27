@@ -62,7 +62,10 @@
                     }
                     catch (Exception ex)
                     {
-                        Logging.Error("Error while connecting to client!", ex);
+                        if (this.running)
+                        {
+                            Logging.Error("Error while connecting to client!", ex);
+                        }
                     }
                 }
             }).Start();

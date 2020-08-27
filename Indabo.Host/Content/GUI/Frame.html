@@ -21,42 +21,6 @@
     %Widget%
 </head>
 <body>
-    <!-- Use conditional comments to check for old IE9 versions (Note: IE9 is the last version that supported conditional comments). -->
-    <div id="ie9ConditionalCommentContainer">
-        <!--[if lte IE 9]>
-        <div style="margin: 16px; font-family: Arial, sans-serif;">
-            <h1>Obsolete Browser detected</h1>
-            <p>
-                Unfortunately, the config page cannot be displayed because you're trying
-                to run it in an obsolete, unsupported browser (for example, Internet&#xa0;Explorer&#xa0;9).
-            </p>
-            <p>
-                Please <a href="http://windows.microsoft.com/ie" target="_blank">upgrade your Internet&#xa0;Explorer</a>
-                to version&#xa0;11.
-            </p>
-            <div class="footerComment"></div>
-        </div>
-        <![endif]-->
-    </div>
-    <!--[if !(lte IE 9)]><!-->
-    <!-- Show a warning if Javascript is not enabled. Note that Search engines (like Google) may show this text in the
-        search results, so we use a generic welcome text.
-        Don't show it on IE8 since we aren't able to remove the div there. -->
-    <div id="JavascriptWarning" style="margin-top: 50px;">
-        <h1>Indabo GUI</h1>
-        <p>
-            Welcome to the Indabo GUI. It seems that <strong>JavaScript</strong> is disabled in or you Browser is deprecated.
-            Please enable JavaScript to use the Indabo GUI.
-        </p>
-    </div>
-    <script type="application/javascript">
-        (function () {
-            // Remove the javascript warning as soon as possible.
-            document.getElementById("JavascriptWarning").remove();
-        })();
-    </script>
-    <!--<![endif]-->
-
     <div class="Indabo-Frame-Top">
         <div class="Indabo-Frame-Top-Logo">
 
@@ -76,5 +40,23 @@
         <div class="Indabo-Frame-Bottom-Version">0000-X0</div>
         <div class="Indabo-Frame-Bottom-Version-Label">Version:</div>
     </div>
+
+    <!-- Show a warning if Javascript is not enabled. Note that Search engines (like Google) may show this text in the
+    search results, so we use a generic welcome text.
+    Don't show it on IE8 since we aren't able to remove the div there. -->
+    <div id="JavascriptWarning">
+        <h1>Indabo GUI</h1>
+        <p>
+            It seems that <strong>JavaScript</strong> is disabled or you Browser is deprecated.
+            Please enable JavaScript to use the Indabo GUI.
+        </p>
+    </div>
+    <script type="application/javascript">
+        (function () {
+            // Remove the javascript warning as soon as possible.
+            document.getElementById("JavascriptWarning").remove();
+        })();
+    </script>
+    <!--<![endif]-->
 </body>
 </html>
