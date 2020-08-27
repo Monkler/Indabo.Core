@@ -89,8 +89,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="costura32\e_sqlite3.dll" />
-    <EmbeddedResource Include="costura64\e_sqlite3.dll" />
     <EmbeddedResource Include="..\Resources\Assembly\MySqlConnector.dll">
       <Link>Resources\Assembly\MySqlConnector.dll</Link>
     </EmbeddedResource>
@@ -135,6 +133,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Assembly\Esprima.dll">
       <Link>Resources\Assembly\Esprima.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\win-x64\e_sqlite3.dll">
+      <Link>costura64\e_sqlite3.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Assembly\win-x86\e_sqlite3.dll">
+      <Link>costura32\e_sqlite3.dll</Link>
     </EmbeddedResource>
     <Content Include="..\Resources\Icon\Indabo.ico">
       <Link>Resources\Icon\Indabo.ico</Link>
