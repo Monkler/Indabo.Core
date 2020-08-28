@@ -18,9 +18,12 @@
 
             foreach (string resourceName in resourceNames)
             {
-                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                if (resourceName.StartsWith("Indabo.Resources.Assembly."))
                 {
-                    AssemblyLoadContext.Default.LoadFromStream(stream);
+                    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+                    {
+                        AssemblyLoadContext.Default.LoadFromStream(stream);
+                    }
                 }
             }
 
