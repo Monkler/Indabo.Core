@@ -10,12 +10,113 @@
         MaxHeight="900" MaxWidth="1600" WindowStartupLocation="CenterScreen"
         Icon="/Indabo.Windows.Launcher;component/Resources/Icon/Indabo.png"
         Closing="OnWindowClosing">
+    <Window.Resources>
+        <local:LogTypeToImageConverter x:Key="LogTypeToImageConverter" />
+    </Window.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <cefSharp:ChromiumWebBrowser
-              Address="{Binding WebAddress, ElementName=MainWindow1, Mode=TwoWay}"
-              Title="{Binding WebTitle, ElementName=MainWindow1,Mode=OneWayToSource}"
-              AllowDrop="True"
-              WebBrowser="{Binding WebBrowser, ElementName=MainWindow1, Mode=OneWayToSource}">
+            Grid.Row="0"
+            Address="{Binding WebAddress, ElementName=MainWindow1, Mode=TwoWay}"
+            Title="{Binding WebTitle, ElementName=MainWindow1,Mode=OneWayToSource}"
+            AllowDrop="True"
+            WebBrowser="{Binding WebBrowser, ElementName=MainWindow1, Mode=OneWayToSource}">
         </cefSharp:ChromiumWebBrowser>
+        <GridSplitter Grid.Row="1" Height="2" HorizontalAlignment="Stretch" />
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <DockPanel>
+                    <ToggleButton x:Name="FilterError" Content="{Binding ErrorCount, ElementName=MainWindow1}" IsChecked="{Binding ShowError, ElementName=MainWindow1}" Margin="3">
+                        <ToggleButton.ContentTemplate>
+                            <DataTemplate>
+                                <DockPanel HorizontalAlignment="Left" >
+                                    <Image Source="/Indabo.Windows.Launcher;component/Resources/Icon/error.png" Width="20" Margin="5,0,5,0" />
+                                    <TextBlock Text="{Binding}" Margin="0,0,5,0"></TextBlock>
+                                    <TextBlock Margin="0,0,10,0">Errors</TextBlock>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ToggleButton.ContentTemplate>
+                    </ToggleButton>
+                    <ToggleButton x:Name="FilterWarning" Content="{Binding WarningCount, ElementName=MainWindow1}" IsChecked="{Binding ShowWarning, ElementName=MainWindow1}" Margin="3">
+                        <ToggleButton.ContentTemplate>
+                            <DataTemplate>
+                                <DockPanel HorizontalAlignment="Left" >
+                                    <Image Source="/Indabo.Windows.Launcher;component/Resources/Icon/warning.png" Width="20" Margin="5,0,5,0" />
+                                    <TextBlock Text="{Binding}" Margin="0,0,5,0"></TextBlock>
+                                    <TextBlock Margin="0,0,10,0">Warnings</TextBlock>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ToggleButton.ContentTemplate>
+                    </ToggleButton>
+                    <ToggleButton x:Name="FilterInfo" Content="{Binding InfoCount, ElementName=MainWindow1}" IsChecked="{Binding ShowInfo, ElementName=MainWindow1}" Margin="3">
+                        <ToggleButton.ContentTemplate>
+                            <DataTemplate>
+                                <DockPanel HorizontalAlignment="Left" >
+                                    <Image Source="/Indabo.Windows.Launcher;component/Resources/Icon/info.png" Width="20" Margin="5,0,5,0" />
+                                    <TextBlock Text="{Binding}" Margin="0,0,5,0"></TextBlock>
+                                    <TextBlock Margin="0,0,10,0">Infos</TextBlock>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ToggleButton.ContentTemplate>
+                    </ToggleButton>
+                    <ToggleButton x:Name="FilterTrace" Content="{Binding TraceCount, ElementName=MainWindow1}" IsChecked="{Binding ShowTrace, ElementName=MainWindow1}" Margin="3">
+                        <ToggleButton.ContentTemplate>
+                            <DataTemplate>
+                                <DockPanel HorizontalAlignment="Left" >
+                                    <Image Source="/Indabo.Windows.Launcher;component/Resources/Icon/trace.png" Width="20" Margin="5,0,5,0" />
+                                    <TextBlock Text="{Binding}" Margin="0,0,5,0"></TextBlock>
+                                    <TextBlock Margin="0,0,10,0">Trace</TextBlock>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ToggleButton.ContentTemplate>
+                    </ToggleButton>
+                    <ToggleButton x:Name="FilterDebug" Content="{Binding DebugCount, ElementName=MainWindow1}" IsChecked="{Binding ShowDebug, ElementName=MainWindow1}" Margin="3" Visibility="Visible">
+                        <ToggleButton.ContentTemplate>
+                            <DataTemplate>
+                                <DockPanel HorizontalAlignment="Left" >
+                                    <Image Source="/Indabo.Windows.Launcher;component/Resources/Icon/debug.png" Width="20" Margin="5,0,5,0" />
+                                    <TextBlock Text="{Binding}" Margin="0,0,5,0"></TextBlock>
+                                    <TextBlock Margin="0,0,10,0">Debug</TextBlock>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ToggleButton.ContentTemplate>
+                    </ToggleButton>
+                    <Grid>
+                        <Button HorizontalAlignment="Right" Margin="3,3,5,3" ToolTip="Export to File" Click="OnExportToFileClick">
+                            <Image Source="/Indabo.Windows.Launcher;component/Resources/Icon/download.png" />
+                        </Button>
+                    </Grid>
+                </DockPanel>
+            </Grid>
+            <DataGrid x:Name="logEntriesList" AutoGenerateColumns="False" IsReadOnly="True" Grid.Row="1" ScrollViewer.CanContentScroll="False" ItemsSource="{Binding LogEntriesView, ElementName=MainWindow1, IsAsync=True}">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Copy to Clipboard" Click="OnLogEntriesListCopyToClipboard"  />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Path=LogType, Converter={StaticResource LogTypeToImageConverter}}" Width="20"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Time" Binding="{Binding Path=LoggingTime, StringFormat='HH:mm:ss'}" Width="Auto"/>
+                    <DataGridTextColumn Header="Message" Binding="{Binding Path=Message}" Width="*" />
+                    <DataGridTextColumn Header="Sender" Binding="{Binding Path=Sender}" Visibility="Hidden"/>
+                    <DataGridTextColumn Header="Attached Object" Binding="{Binding Path=AttachedObject}" Visibility="Hidden"/>
+                    <DataGridTextColumn Header="Exception" Binding="{Binding Path=Exception}" Visibility="Hidden"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
 </Window>
