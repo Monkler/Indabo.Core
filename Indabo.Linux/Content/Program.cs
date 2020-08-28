@@ -6,11 +6,12 @@
     using System.Linq;
     using System.Reflection;
     using System.Runtime.Loader;
+
     using Indabo.Shared;
 
     public class Program
     {
-        static Program()
+        public static void Main(string[] args)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             IEnumerable<string> resourceNames = assembly.GetManifestResourceNames();
@@ -25,9 +26,11 @@
 
             AssemblyResolver assemblyResolver = new AssemblyResolver(assembly);
             assemblyResolver.Activate();
+
+            Run(args);
         }
 
-        public static void Main(string[] args)
+        public static void Run(string[] args)
         {
             Host.Program.Start(args);
 
