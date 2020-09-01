@@ -104,7 +104,7 @@
                     response.StatusCode = (int)HttpStatusCode.OK;
                     response.ContentType = "application/json";
 
-                    List<string> panels = DynamicHtmlLoader.GetFileNamesFromFolder(DynamicHtmlLoader.PANEL_FOLDER);
+                    List<string> panels = DynamicHtmlLoader.GetFileNamesFromFolder(Program.Config.RootDirectory, DynamicHtmlLoader.PANEL_FOLDER);
 
                     string json = JsonConvert.SerializeObject(panels, Formatting.None);
                     buffer = Encoding.UTF8.GetBytes(json);

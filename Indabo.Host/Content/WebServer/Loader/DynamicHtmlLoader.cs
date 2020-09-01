@@ -5,17 +5,19 @@
 
     internal static class DynamicHtmlLoader
     {
-        public const string PANEL_FOLDER = "./Panel";
+        public const string PANEL_FOLDER = "Panel";
 
-        public static List<string> GetFileNamesFromFolder(string rootFolder)
+        public static List<string> GetFileNamesFromFolder(string rootFolder, string subFolder)
         {
             List<string> fileNames = new List<string>();
 
-            if (Directory.Exists(rootFolder))
-            {
-                string rootFolderAbsolutePath = (new FileInfo(rootFolder)).FullName + "\\";
+            string absolutePath = Path.Combine(rootFolder, subFolder);
 
-                foreach (string file in Directory.GetFiles(rootFolder, "*.*", SearchOption.AllDirectories))
+            if (Directory.Exists(absolutePath))
+            {
+                string rootFolderAbsolutePath = (new FileInfo(absolutePath)).FullName + "\\";
+
+                foreach (string file in Directory.GetFiles(absolutePath, "*.*", SearchOption.AllDirectories))
                 {
                     if (file.EndsWith(".html"))
                     {
