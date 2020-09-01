@@ -43,10 +43,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Indabo.Core\Indabo.Core.csproj">
-      <Private>false</Private>
+      <Private>true</Private>
     </ProjectReference>
     <ProjectReference Include="..\Indabo.Host\Indabo.Host.csproj">
-      <Private>false</Private>
+      <Private>true</Private>
     </ProjectReference>
   </ItemGroup>
 
