@@ -108,7 +108,7 @@
 
                     if (command.IsStoredQuery)
                     {
-                        string absolutePath = Path.Combine(Config.ROOT_DIRECTORY, SQLReader.STORED_QUERY_FOLDER, command.Query.Replace("/", "\\").TrimStart('\\'));
+                        string absolutePath = Path.Combine(Program.Config.RootDirectory, SQLReader.STORED_QUERY_FOLDER, command.Query.Replace("/", "\\").TrimStart('\\'));
                         absolutePath = Uri.UnescapeDataString(absolutePath);
                         if (File.Exists(absolutePath) == false)
                         {

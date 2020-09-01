@@ -124,7 +124,7 @@
                         response.ContentType = "text/html";
                     }
 
-                    string absolutePanelPath = Path.Combine(Config.ROOT_DIRECTORY, request.Url.AbsolutePath.Replace("/", "\\").TrimStart('\\'));
+                    string absolutePanelPath = Path.Combine(Program.Config.RootDirectory, request.Url.AbsolutePath.Replace("/", "\\").TrimStart('\\'));
                     absolutePanelPath = Uri.UnescapeDataString(absolutePanelPath);
                     if (File.Exists(absolutePanelPath))
                     {
@@ -160,8 +160,8 @@
                         {
                             string frame = reader.ReadToEnd();
 
-                            string libraries = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Config.ROOT_DIRECTORY, DynamicJavascriptLoader.LIBRARY_FOLDER);
-                            string widgets = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Config.ROOT_DIRECTORY, DynamicJavascriptLoader.WIDGET_FOLDER);
+                            string libraries = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Program.Config.RootDirectory, DynamicJavascriptLoader.LIBRARY_FOLDER);
+                            string widgets = DynamicJavascriptLoader.LoadFromFolderAsHtmlTags(Program.Config.RootDirectory, DynamicJavascriptLoader.WIDGET_FOLDER);
 
                             frame = frame.Replace("%Library%", libraries);
                             frame = frame.Replace("%Widget%", widgets);

@@ -13,9 +13,9 @@ namespace Indabo.Host
         {
             this.plugins = new List<Plugin>();
 
-            if (Directory.Exists(Path.Combine(Config.ROOT_DIRECTORY, DEFAULT_PLUGIN_FOLDER)))
+            if (Directory.Exists(Path.Combine(Program.Config.RootDirectory, DEFAULT_PLUGIN_FOLDER)))
             {
-                string[] fileEntries = Directory.GetFiles(Path.Combine(Config.ROOT_DIRECTORY, DEFAULT_PLUGIN_FOLDER));
+                string[] fileEntries = Directory.GetFiles(Path.Combine(Program.Config.RootDirectory, DEFAULT_PLUGIN_FOLDER));
                 foreach (string fileName in fileEntries)
                 {
                     this.plugins.Add(new Plugin(fileName));
