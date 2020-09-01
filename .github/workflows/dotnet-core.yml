@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -19,8 +19,10 @@ jobs:
         dotnet-version: 3.1.301
     - name: Install dependencies
       run: dotnet restore
-    - name: Build
+    - name: Build Linux
       run: dotnet build --configuration Release --no-restore Indabo.Linux/Indabo.Linux.csproj
+    - name: Build Windows
+      run: dotnet build --configuration Release --no-restore Indabo.Windows/Indabo.Windows.csproj
     - name: Commit changes
       run: |
           git config --global user.name 'System'
@@ -32,7 +34,11 @@ jobs:
           git checkout Releases   		  
           cp -rf ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll Indabo_${INDABOVERSION}_${DATE}.dll
           cp -rf ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll Indabo.dll
+          cp -rf ./Indabo.Windows/bin/Release/Indabo.exe Indabo_${INDABOVERSION}_${DATE}.exe
+          cp -rf ./Indabo.Windows/bin/Release/Indabo.exe Indabo.exe
           git add Indabo_${INDABOVERSION}_${DATE}.dll
           git add Indabo.dll
+          git add Indabo_${INDABOVERSION}_${DATE}.exe
+          git add Indabo.exe
           git commit -am "${INDABOVERSION}_${DATE}"
           git push
