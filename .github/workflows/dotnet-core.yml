@@ -17,28 +17,44 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
-    - name: Install dependencies
+    - name: Install dependencies (dotnet)
       run: dotnet restore
     - name: Build Linux
       run: dotnet build --configuration Release --no-restore Indabo.Linux/Indabo.Linux.csproj
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.0.1
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+    - name: Install dependencies (msbuild)      
+      run: nuget restore Indabo.Windows/packages.config -PackagesDirectory ./packages
     - name: Build Windows
-      run: dotnet build --configuration Release --no-restore Indabo.Windows/Indabo.Windows.csproj
+      run: msbuild Indabo.Windows/Indabo.Windows.csproj /p:Configuration=Release
     - name: Commit changes
       run: |
-          git config --global user.name 'System'
-          git config --global user.email 'System@github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.GIT_TOKEN }}@github.com/$GITHUB_REPOSITORY          
-          git fetch
-          INDABOVERSION=$(sed -n 's:.*<AssemblyVersion>\(.*\)</AssemblyVersion>.*:\1:p' ./Indabo.Linux/Indabo.Linux.csproj)
-          DATE=$(date '+%Y-%m-%d_%H.%M.%S')
-          git checkout Releases   		  
-          cp -rf ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll Indabo_${INDABOVERSION}_${DATE}.dll
-          cp -rf ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll Indabo.dll
-          cp -rf ./Indabo.Windows/bin/Release/Indabo.exe Indabo_${INDABOVERSION}_${DATE}.exe
-          cp -rf ./Indabo.Windows/bin/Release/Indabo.exe Indabo.exe
-          git add Indabo_${INDABOVERSION}_${DATE}.dll
+          Write-Output 'Set Version and Date'      
+          $INDABOVERSION = (Get-Item ".\Indabo.Windows\bin\Release\Indabo.exe").VersionInfo.FileVersion
+          $DATE = get-date
+          $DATE = $DATE.toString("yyyy-MM-dd_HH.mm.ss.fff")
+          Write-Output 'Setup GIT Repo'      
+          git config remote.origin.url https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git fetch --prune --unshallow 
+          git checkout Releases
+          Write-Output 'Copy Items'
+          Copy-Item ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll -Destination Indabo.dll
+          Copy-Item ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll Indabo_${INDABOVERSION}_${DATE}.dll
+          Copy-Item ./Indabo.Windows/bin/Release/Indabo.exe -Destination Indabo.exe
+          Copy-Item ./Indabo.Windows/bin/Release/Indabo.exe Indabo_${INDABOVERSION}_${DATE}.exe
+          Write-Output 'Adding Items to GIT Repo'
           git add Indabo.dll
-          git add Indabo_${INDABOVERSION}_${DATE}.exe
+          git add Indabo_${INDABOVERSION}_${DATE}.dll
           git add Indabo.exe
+          git add Indabo_${INDABOVERSION}_${DATE}.exe
+          Write-Output 'Committing'
+          git config user.name "github-actions" 
+          git config user.email "github-actions@github.com"    
           git commit -am "${INDABOVERSION}_${DATE}"
+          git config --unset user.name
+          git config --unset user.email
+          Write-Output 'Pushing'
           git push
+          Write-Output 'Done'
