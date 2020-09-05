@@ -56,5 +56,5 @@ jobs:
           git config --unset user.name
           git config --unset user.email
           Write-Output 'Pushing'
-          git push --verbose --progress --signed=false
+          git push
           Write-Output 'Done'
