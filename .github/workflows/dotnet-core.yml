@@ -40,10 +40,10 @@ jobs:
           git fetch --prune --unshallow 
           git checkout Releases
           Write-Output 'Copy Items'
-          Copy-Item ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll -Destination Indabo.dll
-          Copy-Item ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll Indabo_${INDABOVERSION}_${DATE}.dll
-          Copy-Item ./Indabo.Windows/bin/Release/Indabo.exe -Destination Indabo.exe
-          Copy-Item ./Indabo.Windows/bin/Release/Indabo.exe Indabo_${INDABOVERSION}_${DATE}.exe
+          Copy-Item ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll -Destination Indabo.dll -Force
+          Copy-Item ./Indabo.Linux/bin/Release/netcoreapp3.1/Indabo.dll Indabo_${INDABOVERSION}_${DATE}.dll -Force
+          Copy-Item ./Indabo.Windows/bin/Release/Indabo.exe -Destination Indabo.exe -Force
+          Copy-Item ./Indabo.Windows/bin/Release/Indabo.exe Indabo_${INDABOVERSION}_${DATE}.exe -Force
           Write-Output 'Adding Items to GIT Repo'
           git add Indabo.dll
           git add Indabo_${INDABOVERSION}_${DATE}.dll
